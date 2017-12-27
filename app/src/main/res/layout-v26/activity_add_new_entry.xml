@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.498">
 
         <NumberPicker
-            android:id="@+id/numberPicker0"
+            android:id="@+id/np_systolic_pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -29,7 +29,7 @@
             android:orientation="vertical" />
 
         <NumberPicker
-            android:id="@+id/numberPicker1"
+            android:id="@+id/np_diastolic_pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -38,7 +38,7 @@
             android:layout_marginHorizontal="5dp"/>
 
         <NumberPicker
-            android:id="@+id/numberPicker2"
+            android:id="@+id/np_pulse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
