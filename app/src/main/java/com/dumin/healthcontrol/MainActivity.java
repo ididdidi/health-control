@@ -15,8 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public Settings appSettings = new Settings(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
+                intent.putExtra("iSettings",appSettings.LoadPreferences(Settings.APP.PARAMETER_CHANGES
+                ));
                 startActivity(intent);
             }
         });
@@ -114,4 +119,5 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new Statistics(), "Statistics");
         viewPager.setAdapter(adapter);
     }
+
 }

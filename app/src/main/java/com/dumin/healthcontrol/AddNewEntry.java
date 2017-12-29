@@ -1,10 +1,14 @@
 package com.dumin.healthcontrol;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class AddNewEntry extends AppCompatActivity {
 
@@ -12,6 +16,8 @@ public class AddNewEntry extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_entry);
+        Intent intent = getIntent();
+        Toast.makeText(this, intent.getStringExtra("iSettings"), Toast.LENGTH_SHORT).show();
 
         // Back arrow in action bar
         ActionBar actionBar =getSupportActionBar();
