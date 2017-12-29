@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra("iSettings",appSettings.LoadPreferences(Settings.APP.PARAMETER_CHANGES
+                intent.putExtra("iSettings",appSettings.LoadPreferences(Settings.PRM.PARAMETER_CHANGES
                 ));
                 startActivity(intent);
             }
@@ -91,20 +91,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
+        switch(item.getItemId()){
+            case R.id.blood_pressure: {
+                appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.BLOOD_PRESSURE);
+                // Handle the camera action
+                break;
+            }
+            case R.id.glucose: {
+                appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.GLUCOSE);
+                // Handle the camera action
+                break;
+            }
+        default: appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.BLOOD_PRESSURE);
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
