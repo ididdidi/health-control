@@ -1,10 +1,12 @@
 package com.dumin.healthcontrol;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,11 +17,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    public Settings appSettings = new Settings(this);
+
+    SharedPreferences appPref;
+    final String APP_PREFERENCES = "app_preferences";
+    final String MEASUREMENT = "measurement";
+    final String BLOOD_PRESSURE = "blood_pressure";
+    final String GLUCOSE = "glucose";
+
+    ViewPager viewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -33,13 +41,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra("iSettings",appSettings.LoadPreferences(Settings.PRM.PARAMETER_CHANGES
-                ));
+                intent.putExtra("iSettings",LoadPreferences(MEASUREMENT));
                 startActivity(intent);
             }
         });
         // for rendering pages in TabLayout
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -93,16 +100,18 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         switch(item.getItemId()){
             case R.id.blood_pressure: {
-                appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.BLOOD_PRESSURE);
+                SavePreferences(MEASUREMENT, BLOOD_PRESSURE);
                 // Handle the camera action
+                setupViewPager(viewPager);
                 break;
             }
             case R.id.glucose: {
-                appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.GLUCOSE);
+                SavePreferences(MEASUREMENT, GLUCOSE);
                 // Handle the camera action
+                setupViewPager(viewPager);
                 break;
             }
-        default: appSettings.SavePreferences(Settings.PRM.PARAMETER_CHANGES, Settings.PRM.BLOOD_PRESSURE);
+        default: SavePreferences(MEASUREMENT, BLOOD_PRESSURE);
             // Handle the camera action
         }
 
@@ -113,10 +122,47 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Entries(), "Data");
-        adapter.addFragment(new Graphics(), "Graphics");
-        adapter.addFragment(new Statistics(), "Statistics");
+        switch(LoadPreferences(MEASUREMENT)){
+            // надо использовать Remove или Replace!!!
+            case BLOOD_PRESSURE:
+                adapter.addFragment(new Entries(), "Data");
+                adapter.addFragment(new Graphics(), "Graphics");
+                adapter.addFragment(new Statistics(), "Statistics");
+                break;
+            case GLUCOSE:
+                adapter.addFragment(new Graphics(), "Graphics");
+                adapter.addFragment(new Statistics(), "Statistics");
+                adapter.addFragment(new Entries(), "Data");
+                break;
+            default:
+                adapter.addFragment(new Entries(), "Data");
+                adapter.addFragment(new Graphics(), "Graphics");
+                adapter.addFragment(new Statistics(), "Statistics");
+                break;
+        }
+
         viewPager.setAdapter(adapter);
+    }
+
+    public void SavePreferences(String key, String value) {
+        appPref = this.getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = appPref.edit();
+        editor.putString(key.toString(), value.toString());
+        editor.apply();
+        Log.wtf(getClass().getName(), LoadPreferences(MEASUREMENT));
+    }
+
+    public String LoadPreferences(String key) {
+        appPref = this.getSharedPreferences(
+                APP_PREFERENCES, MODE_PRIVATE);
+        switch (key) {
+            case MEASUREMENT:
+                return appPref.getString(key.toString(),
+                        BLOOD_PRESSURE);
+            default:
+                return new String("LoadPreferences no correct");
+        }
     }
 
 }
