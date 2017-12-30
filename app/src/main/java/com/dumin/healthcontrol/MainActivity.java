@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SharedPreferences appPref;
-    final String APP_PREFERENCES = "app_preferences";
-    final String MEASUREMENT = "measurement";
-    final String BLOOD_PRESSURE = "blood_pressure";
-    final String GLUCOSE = "glucose";
+    final static String APP_PREFERENCES = "app_preferences";
+    final static String MEASUREMENT = "measurement";
+    final static String BLOOD_PRESSURE = "blood_pressure";
+    final static String GLUCOSE = "glucose";
 
     ViewPager viewPager;
 
@@ -122,24 +122,24 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        switch(LoadPreferences(MEASUREMENT)){
-            // надо использовать Remove или Replace!!!
-            case BLOOD_PRESSURE:
+//        switch(LoadPreferences(MEASUREMENT)){
+//            // надо использовать Remove или Replace!!!
+//            case BLOOD_PRESSURE:
                 adapter.addFragment(new Entries(), "Data");
                 adapter.addFragment(new Graphics(), "Graphics");
                 adapter.addFragment(new Statistics(), "Statistics");
-                break;
-            case GLUCOSE:
-                adapter.addFragment(new Graphics(), "Graphics");
-                adapter.addFragment(new Statistics(), "Statistics");
-                adapter.addFragment(new Entries(), "Data");
-                break;
-            default:
-                adapter.addFragment(new Entries(), "Data");
-                adapter.addFragment(new Graphics(), "Graphics");
-                adapter.addFragment(new Statistics(), "Statistics");
-                break;
-        }
+//                break;
+//            case GLUCOSE:
+//                adapter.addFragment(new Graphics(), "Graphics");
+//                adapter.addFragment(new Statistics(), "Statistics");
+//                adapter.addFragment(new Entries(), "Data");
+//                break;
+//            default:
+//                adapter.addFragment(new Entries(), "Data");
+//                adapter.addFragment(new Graphics(), "Graphics");
+//                adapter.addFragment(new Statistics(), "Statistics");
+//                break;
+//        }
 
         viewPager.setAdapter(adapter);
     }
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         appPref = this.getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = appPref.edit();
-        editor.putString(key.toString(), value.toString());
+        editor.putString(key, value);
         editor.apply();
         Log.wtf(getClass().getName(), LoadPreferences(MEASUREMENT));
     }
@@ -158,10 +158,10 @@ public class MainActivity extends AppCompatActivity
                 APP_PREFERENCES, MODE_PRIVATE);
         switch (key) {
             case MEASUREMENT:
-                return appPref.getString(key.toString(),
+                return appPref.getString(key,
                         BLOOD_PRESSURE);
             default:
-                return new String("LoadPreferences no correct");
+                return "LoadPreferences no correct";
         }
     }
 
