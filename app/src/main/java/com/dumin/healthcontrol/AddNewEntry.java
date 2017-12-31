@@ -15,7 +15,8 @@ public class AddNewEntry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_entry);
         Intent intent = getIntent();
-        Toast.makeText(this, intent.getStringExtra("iSettings"), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, intent.getStringExtra(MainActivity.APP_PREFERENCES),
+                Toast.LENGTH_SHORT).show();
 
         // Back arrow in action bar
         ActionBar actionBar =getSupportActionBar();

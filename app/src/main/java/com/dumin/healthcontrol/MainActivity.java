@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity
 
     ViewPager viewPager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -41,12 +40,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra("iSettings",LoadPreferences(MEASUREMENT));
+                intent.putExtra(APP_PREFERENCES, LoadPreferences(MEASUREMENT));
                 startActivity(intent);
             }
         });
         // for rendering pages in TabLayout
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(2); // Limit is all
         setupViewPager(viewPager);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
@@ -122,24 +122,10 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        switch(LoadPreferences(MEASUREMENT)){
-//            // надо использовать Remove или Replace!!!
-//            case BLOOD_PRESSURE:
+
                 adapter.addFragment(new Entries(), "Data");
                 adapter.addFragment(new Graphics(), "Graphics");
                 adapter.addFragment(new Statistics(), "Statistics");
-//                break;
-//            case GLUCOSE:
-//                adapter.addFragment(new Graphics(), "Graphics");
-//                adapter.addFragment(new Statistics(), "Statistics");
-//                adapter.addFragment(new Entries(), "Data");
-//                break;
-//            default:
-//                adapter.addFragment(new Entries(), "Data");
-//                adapter.addFragment(new Graphics(), "Graphics");
-//                adapter.addFragment(new Statistics(), "Statistics");
-//                break;
-//        }
 
         viewPager.setAdapter(adapter);
     }
