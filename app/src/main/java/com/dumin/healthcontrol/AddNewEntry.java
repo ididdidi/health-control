@@ -1,5 +1,6 @@
 package com.dumin.healthcontrol;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,20 +24,13 @@ public class AddNewEntry extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        NumberPicker numberPicker0 = (NumberPicker) findViewById(R.id.np_systolic_pressure);
-        numberPicker0.setMaxValue(300);
-        numberPicker0.setMinValue(50);
-        numberPicker0.setValue(120);
+        if(intent.getStringExtra(MainActivity.APP_PREFERENCES).equals(MainActivity.BLOOD_PRESSURE)) {
+            FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
+            AddBPEntry addBPEntry = new AddBPEntry();
+            frTransaction.replace(R.id.fragment, addBPEntry);
+            frTransaction.commit();
+        }
 
-        NumberPicker numberPicker1 = (NumberPicker) findViewById(R.id.np_diastolic_pressure);
-        numberPicker1.setMaxValue(150);
-        numberPicker1.setMinValue(30);
-        numberPicker1.setValue(80);
-
-        NumberPicker numberPicker2 = (NumberPicker) findViewById(R.id.np_pulse);
-        numberPicker2.setMaxValue(500);
-        numberPicker2.setMinValue(40);
-        numberPicker2.setValue(70);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
