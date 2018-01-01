@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 public class AddNewEntry extends AppCompatActivity {
 
+    final private String FRAGMENT_TAG = "fragment_tag";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,12 +26,16 @@ public class AddNewEntry extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
+
         if(intent.getStringExtra(MainActivity.APP_PREFERENCES).equals(MainActivity.BLOOD_PRESSURE)) {
-            FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
-            AddBPEntry addBPEntry = new AddBPEntry();
-            frTransaction.replace(R.id.fragment, addBPEntry);
-            frTransaction.commit();
+            if(savedInstanceState == null) {
+                AddBPEntry addBPEntry = new AddBPEntry();
+                frTransaction.add(R.id.fragment, addBPEntry,FRAGMENT_TAG);
+            }
         }
+
+        frTransaction.commit();
 
     }
     @Override
