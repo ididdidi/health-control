@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-public class AddNewEntry extends AppCompatActivity {
+public class AddNewEntry extends AppCompatActivity implements AddBPEntry.onSomeEventListener {
 
     final private String FRAGMENT_TAG = "fragment_tag";
 
@@ -38,6 +41,7 @@ public class AddNewEntry extends AppCompatActivity {
         frTransaction.commit();
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -47,5 +51,15 @@ public class AddNewEntry extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void someEvent(boolean update) {
+        final String LOG_TAG = "myLogs";
+        Log.d(LOG_TAG, "AddNewEntry updateInformMainActivity");
+        Intent intent = new Intent();
+        intent.putExtra("update",true);
+        setResult(RESULT_OK, intent);
+        this.finish();
     }
 }

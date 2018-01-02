@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
                 intent.putExtra(APP_PREFERENCES, LoadPreferences(MEASUREMENT));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         // for rendering pages in TabLayout
@@ -129,6 +128,13 @@ public class MainActivity extends AppCompatActivity
                 adapter.addFragment(new Statistics(), "Statistics");
 
         viewPager.setAdapter(adapter);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(data == null) {return;}
+        if(data.getBooleanExtra("update",false)){
+            setupViewPager(viewPager);
+        }
     }
 
     public void SavePreferences(String key, String value) {

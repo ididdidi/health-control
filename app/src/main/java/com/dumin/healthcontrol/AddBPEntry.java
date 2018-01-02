@@ -2,9 +2,13 @@ package com.dumin.healthcontrol;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.NumberPicker;
@@ -41,6 +45,7 @@ public class AddBPEntry extends Fragment {
             diastolic_pressure = savedInstanceState.getInt(DIASTOLIC_PRESSURE, 80);
             pulse = savedInstanceState.getInt(PULSE, 70);
         }
+        setHasOptionsMenu(true);
         Log.d(LOG_TAG, "AddBPEntry onCreate " + systolic_pressure);
     }
 
@@ -77,13 +82,43 @@ public class AddBPEntry extends Fragment {
         Log.d(LOG_TAG, "AddBPEntry onSaveInstanceState " + numberPicker2.getValue());
     }
 
-    final String LOG_TAG = "myLogs";
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_add_new_entery, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    // Updating the information in the fragments to MainActivity
+
+    public interface onSomeEventListener{
+        public void someEvent(boolean update);
+    }
+
+    onSomeEventListener updateInformMainActivity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try{
+            updateInformMainActivity = (onSomeEventListener) activity;
+        } catch (ClassCastException e){
+            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
+        }
         Log.d(LOG_TAG, "AddBPEntry onAttach");
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.save_entry:
+                updateInformMainActivity.someEvent(true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    final String LOG_TAG = "myLogs";
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
