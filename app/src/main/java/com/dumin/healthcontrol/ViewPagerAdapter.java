@@ -2,6 +2,7 @@ package com.dumin.healthcontrol;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
  * Adapter for rendering pages in TabLayout.
  */
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class ViewPagerAdapter extends FragmentPagerAdapter {
 
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
