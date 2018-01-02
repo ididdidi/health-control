@@ -16,7 +16,7 @@ import android.widget.Toast;
  * Displays data in TabLayout
  */
 
-public class Entries extends Fragment {
+public class EntriesList extends Fragment {
 
     Context context;
 
@@ -24,7 +24,7 @@ public class Entries extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
-        Log.d(LOG_TAG, "Entries onCreate");
+        Log.d(LOG_TAG, "EntriesList onCreate");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Entries extends Fragment {
         SharedPreferences sp = context.getSharedPreferences(MainActivity.APP_PREFERENCES, 0);
         Toast.makeText(context, sp.getString(MainActivity.MEASUREMENT,
                 MainActivity.BLOOD_PRESSURE), Toast.LENGTH_SHORT).show();
-        Log.d(LOG_TAG, "Entries onCreateView");
+        Log.d(LOG_TAG, "EntriesList onCreateView");
         return inflater.inflate(R.layout.entries, container, false);
     }
 
@@ -42,47 +42,47 @@ public class Entries extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG_TAG, "Entries onAttach");
+        Log.d(LOG_TAG, "EntriesList onAttach");
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG, "Entries onActivityCreated");
+        Log.d(LOG_TAG, "EntriesList onActivityCreated");
     }
 
     public void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "Entries onStart");
+        Log.d(LOG_TAG, "EntriesList onStart");
     }
 
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "Entries onResume");
+        Log.d(LOG_TAG, "EntriesList onResume");
     }
 
     public void onPause() {
         super.onPause();
-        Log.d(LOG_TAG, "Entries onPause");
+        Log.d(LOG_TAG, "EntriesList onPause");
     }
 
     public void onStop() {
         super.onStop();
-        Log.d(LOG_TAG, "Entries onStop");
+        Log.d(LOG_TAG, "EntriesList onStop");
     }
 
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(LOG_TAG, "Entries onDestroyView");
+        Log.d(LOG_TAG, "EntriesList onDestroyView");
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "Entries onDestroy");
+        Log.d(LOG_TAG, "EntriesList onDestroy");
     }
 
     public void onDetach() {
         super.onDetach();
-        Log.d(LOG_TAG, "Entries onDetach");
+        Log.d(LOG_TAG, "EntriesList onDetach");
     }
 
 
