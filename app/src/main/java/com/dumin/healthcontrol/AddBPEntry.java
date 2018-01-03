@@ -2,9 +2,7 @@ package com.dumin.healthcontrol;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,14 +18,13 @@ import android.widget.NumberPicker;
 public class AddBPEntry extends Fragment {
 
     private final String SYSTOLIC_PRESSURE = "systolic_pressure";
+    private final String DIASTOLIC_PRESSURE = "diastolic_pressure";
+    private final String PULSE = "pulse";
+    private onSomeEventListener updateInformMainActivity;
     private int systolic_pressure;
     private NumberPicker numberPicker0;
-
-    private final String DIASTOLIC_PRESSURE = "diastolic_pressure";
     private int diastolic_pressure;
     private NumberPicker numberPicker1;
-
-    private final String PULSE = "pulse";
     private int pulse;
     private NumberPicker numberPicker2;
 
@@ -35,18 +32,17 @@ public class AddBPEntry extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
+
             systolic_pressure = 120;
             diastolic_pressure = 80;
             pulse = 70;
-        }
-        else{
+        } else {
             systolic_pressure = savedInstanceState.getInt(SYSTOLIC_PRESSURE, 120);
             diastolic_pressure = savedInstanceState.getInt(DIASTOLIC_PRESSURE, 80);
             pulse = savedInstanceState.getInt(PULSE, 70);
         }
         setHasOptionsMenu(true);
-        Log.d(LOG_TAG, "AddBPEntry onCreate " + systolic_pressure);
     }
 
     @Override
@@ -79,37 +75,32 @@ public class AddBPEntry extends Fragment {
         outState.putInt(SYSTOLIC_PRESSURE, numberPicker0.getValue());
         outState.putInt(DIASTOLIC_PRESSURE, numberPicker1.getValue());
         outState.putInt(PULSE, numberPicker0.getValue());
-        Log.d(LOG_TAG, "AddBPEntry onSaveInstanceState " + numberPicker2.getValue());
     }
+
+    // Updating the information in the fragments to MainActivity
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_add_new_entery, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // Updating the information in the fragments to MainActivity
-
-    public interface onSomeEventListener{
-        public void someEvent(boolean update);
-    }
-
-    onSomeEventListener updateInformMainActivity;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try{
+        try {
             updateInformMainActivity = (onSomeEventListener) activity;
-        } catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
         }
-        Log.d(LOG_TAG, "AddBPEntry onAttach");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
+                BloodPressure bp = new BloodPressure(updateInformMainActivity.getLongTime(),
+                        numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
+
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -117,48 +108,9 @@ public class AddBPEntry extends Fragment {
         }
     }
 
-
-    final String LOG_TAG = "myLogs";
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG, "AddBPEntry onActivityCreated");
+    public interface onSomeEventListener {
+        void someEvent(boolean update);     // Sends a signal about the successful adding entry
+        long getLongTime();                 // Stealing time from the Activity
     }
 
-    public void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG, "AddBPEntry onStart");
-    }
-
-    public void onResume() {
-        super.onResume();
-        Log.d(LOG_TAG, "AddBPEntry onResume");
-    }
-
-    public void onPause() {
-        super.onPause();
-        Log.d(LOG_TAG, "AddBPEntry onPause");
-    }
-
-    public void onStop() {
-        super.onStop();
-
-        Log.d(LOG_TAG, "AddBPEntry onStop");
-
-    }
-
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(LOG_TAG, "AddBPEntry onDestroyView");
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG, "AddBPEntry onDestroy");
-    }
-
-    public void onDetach() {
-        super.onDetach();
-        Log.d(LOG_TAG, "AddBPEntry onDetach");
-    }
 }

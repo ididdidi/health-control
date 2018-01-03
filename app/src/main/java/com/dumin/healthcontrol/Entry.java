@@ -16,8 +16,8 @@ public abstract class Entry {
         this.time = new Time(longTime);
     }
 
-    public void setData(Time time) {
-        this.time = time;
+    public void setData(Long longtime) {
+        this.time = new Time(longtime);
     }
     public Time getTime(){
         return time;
