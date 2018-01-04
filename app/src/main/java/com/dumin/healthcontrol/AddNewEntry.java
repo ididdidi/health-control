@@ -77,7 +77,7 @@ public class AddNewEntry extends AppCompatActivity implements AddBPEntry.onSomeE
     // Sends a signal about the successful adding entry
     @Override
     public void someEvent(boolean update) {
-        Intent intent = new Intent();
+        Intent intent = getIntent();
         intent.putExtra("update",true);
         setResult(RESULT_OK, intent);
         this.finish();
