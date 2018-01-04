@@ -95,8 +95,8 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-//                Temperature tmprt = new Temperature(updateInformMainActivity.getLongTime(),
-//                        temperature);
+                Temperature tmprt = new Temperature(updateInformMainActivity.getLongTime(),
+                        temperature);
 
                 updateInformMainActivity.someEvent(true);
                 return true;

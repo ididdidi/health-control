@@ -1,6 +1,5 @@
 package com.dumin.healthcontrol;
 
-import android.util.Log;
 import java.sql.Time;
 
 /**
@@ -18,9 +17,6 @@ public class BloodPressure extends Entry {
         systolicPressure = sPressure;
         diastolicPressure = dPressure;
         this.pulse = pulse;
-
-        final String LOG_TAG = "myLogs";
-        Log.d(LOG_TAG, "new BloodPressure");
     }
     // Добавить setTime(), setPressure()
     public void setData(Long longtime, int sPressure, int dPressure, int pulse) {
