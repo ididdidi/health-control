@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AddNewEntry extends AppCompatActivity implements AddBPEntry.onSomeEventListener {
+public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
     private final String TIME = "time";
     long longTime;
@@ -49,11 +49,18 @@ public class AddNewEntry extends AppCompatActivity implements AddBPEntry.onSomeE
     public void setupAddEntryFragment (@NonNull String measurement){
         FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
 
-        if(measurement.equals(MainActivity.BLOOD_PRESSURE)) {
-            AddBPEntry addBPEntry = new AddBPEntry();
-            frTransaction.add(R.id.fragment, addBPEntry);
+        switch (measurement) {
+            case MainActivity.BLOOD_PRESSURE: {
+                AddBloodPressureEntry addBloodPressureEntry = new AddBloodPressureEntry();
+                frTransaction.add(R.id.fragment, addBloodPressureEntry);
+                break;
+            }
+            case MainActivity.TEMPERATURE: {
+                AddTemperatureEntry addTemperatureEntry = new AddTemperatureEntry();
+                frTransaction.add(R.id.fragment, addTemperatureEntry);
+                break;
+            }
         }
-
         frTransaction.commit();
     }
 

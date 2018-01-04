@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity
     final static String MEASUREMENT = "measurement";
     final static String BLOOD_PRESSURE = "blood_pressure";
     final static String GLUCOSE = "glucose";
+    final static String TEMPERATURE = "temperature";
 
     ViewPager viewPager;
 
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -107,6 +107,12 @@ public class MainActivity extends AppCompatActivity
             }
             case R.id.glucose: {
                 SavePreferences(MEASUREMENT, GLUCOSE);
+                // Handle the camera action
+                setupViewPager(viewPager);
+                break;
+            }
+            case R.id.temperature: {
+                SavePreferences(MEASUREMENT, TEMPERATURE);
                 // Handle the camera action
                 setupViewPager(viewPager);
                 break;

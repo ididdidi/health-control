@@ -13,9 +13,9 @@
             android:icon="@drawable/ic_invert_colors_black_24dp"
             android:title="Glucose" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/temperature"
+            android:icon="@drawable/ic_temperature"
+            android:title="Temperature" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

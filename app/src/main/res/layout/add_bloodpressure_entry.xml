@@ -41,7 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
             android:orientation="vertical" />
 
@@ -49,6 +50,8 @@
             android:id="@+id/np_diastolic_pressure"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:orientation="vertical" />
@@ -58,7 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:orientation="vertical" />
 

@@ -15,7 +15,7 @@ import android.widget.NumberPicker;
  * Created by operator on 01.01.2018.
  */
 
-public class AddBPEntry extends Fragment {
+public class AddBloodPressureEntry extends Fragment {
 
     private final String SYSTOLIC_PRESSURE = "systolic_pressure";
     private final String DIASTOLIC_PRESSURE = "diastolic_pressure";
@@ -49,7 +49,7 @@ public class AddBPEntry extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.add_bp_entry, null);
+        View v = inflater.inflate(R.layout.add_bloodpressure_entry, null);
 
         numberPicker0 = (NumberPicker) v.findViewById(R.id.np_systolic_pressure);
         numberPicker0.setMaxValue(300);
@@ -98,7 +98,7 @@ public class AddBPEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                BloodPressure bp = new BloodPressure(updateInformMainActivity.getLongTime(),
+                BloodPressure bloodPressure = new BloodPressure(updateInformMainActivity.getLongTime(),
                         numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
 
                 updateInformMainActivity.someEvent(true);
@@ -106,11 +106,6 @@ public class AddBPEntry extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public interface onSomeEventListener {
-        void someEvent(boolean update);     // Sends a signal about the successful adding entry
-        long getLongTime();                 // Stealing time from the Activity
     }
 
 }
