@@ -5,38 +5,35 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-
         <TextView
-            android:id="@+id/temperature_txt"
+            android:id="@+id/tv_glucose_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/temperature"
-            android:textSize="32sp" />
-
+            android:textAlignment="center"
+            android:textSize="32sp"
+            android:text="@string/glucose"
+            />
         <TextView
-            android:id="@+id/temperature_value"
+            android:id="@+id/tv_glucose_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/temperature"
-            android:textSize="64sp" />
+            android:textSize="48sp"
+            android:text="@string/glucose"/>
 
-        <SeekBar
-            android:id="@+id/temperature_sb"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <com.github.shchurov.horizontalwheelview.HorizontalWheelView
+            android:id="@+id/horizontalWheelView"
+            android:layout_width="240dp"
+            android:layout_height="82dp"
             android:layout_marginTop="16dp"
             android:paddingBottom="32dp"
-            android:max="80"
-            android:min="0"
-            android:progress="44"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:activeColor="@color/colorAccent"
+            app:normalColor="@color/colorPrimary"/>
+
     </LinearLayout>
 
 </FrameLayout>

@@ -9,71 +9,78 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.github.shchurov.horizontalwheelview.HorizontalWheelView;
+
+import java.util.Locale;
+
 /**
- * Created by operator on 04.01.2018.
+ * Created by operator on 05.01.2018.
  */
 
-public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class AddGlucoseEntry extends Fragment {
 
+    private final String GLUCOSE = "glucose";
     private onSomeEventListener updateInformMainActivity;
-    final static String TEMPERATURE = "temperature";
-    private double temperature;
-    private TextView tvTemper;
-    private double minTemper = 34.0;
-    private double ten = 10.0;
+    private HorizontalWheelView horizontalWheelView;
+    private TextView tvGlucose;
+    private double glucose;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            temperature = 36.6;
+            glucose = 5.6;
         } else {
-            temperature = savedInstanceState.getDouble(TEMPERATURE, 36.6);
+            glucose = savedInstanceState.getDouble(GLUCOSE, 5.6);
         }
         setHasOptionsMenu(true);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.add_temperature_entry, null);
+        View v = inflater.inflate(R.layout.add_glucose_entry, null);
 
-        final SeekBar seekBar = (SeekBar) v.findViewById(R.id.temperature_sb);
-        seekBar.setOnSeekBarChangeListener(this);
+        horizontalWheelView = (HorizontalWheelView) v.findViewById(R.id.horizontalWheelView);
+        horizontalWheelView.setOnlyPositiveValues(true);
+        horizontalWheelView.setDegreesAngle(56f);
 
-        tvTemper = (TextView) v.findViewById(R.id.temperature_value);
-        tvTemper.setText(String.valueOf(temperature));
+        tvGlucose = (TextView) v.findViewById(R.id.tv_glucose_value);
+        tvGlucose.setText(String.valueOf(glucose));
+
+        setupListeners();
+        updateText();
         return v;
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        temperature = seekBar.getProgress() / ten + minTemper;
-        tvTemper.setText(String.valueOf(temperature));
+    private void setupListeners() {
+        horizontalWheelView.setListener(new HorizontalWheelView.Listener() {
+            @Override
+            public void onRotationChanged(double radians) {
+                updateValue();
+                updateText();
+            }
+        });
     }
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        temperature = seekBar.getProgress() / ten + minTemper;
-        tvTemper.setText(String.valueOf(temperature));
+    private void updateValue() {
+        glucose = horizontalWheelView.getDegreesAngle() / 10.0;
     }
 
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        temperature = seekBar.getProgress() / ten + minTemper;
-        tvTemper.setText(String.valueOf(temperature));
+    private void updateText() {
+        String text = String.format(Locale.US, "%.1f", glucose);
+        tvGlucose.setText(text);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putDouble(TEMPERATURE, temperature);
+        outState.putDouble(GLUCOSE, glucose);
     }
 
     // Updating the information in the fragments to MainActivity
@@ -97,8 +104,8 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                Temperature tmprt = new Temperature(updateInformMainActivity.getLongTime(),
-                        temperature);
+                Glucose glc = new Glucose(updateInformMainActivity.getLongTime(),
+                        glucose);
 
                 updateInformMainActivity.someEvent(true);
                 return true;
@@ -106,4 +113,5 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

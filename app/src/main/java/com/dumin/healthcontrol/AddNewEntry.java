@@ -55,6 +55,11 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
                 frTransaction.add(R.id.fragment, addBloodPressureEntry);
                 break;
             }
+            case MainActivity.GLUCOSE: {
+                AddGlucoseEntry addGlucoseEntry = new AddGlucoseEntry();
+                frTransaction.add(R.id.fragment, addGlucoseEntry);
+                break;
+            }
             case MainActivity.TEMPERATURE: {
                 AddTemperatureEntry addTemperatureEntry = new AddTemperatureEntry();
                 frTransaction.add(R.id.fragment, addTemperatureEntry);
