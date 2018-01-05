@@ -33,7 +33,7 @@
             android:paddingBottom="32dp"
             android:max="80"
             android:min="0"
-            android:progress="44"
+            android:progress="26"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />

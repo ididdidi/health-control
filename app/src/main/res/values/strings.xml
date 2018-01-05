@@ -10,5 +10,6 @@
     <string name="pulse">Pulse</string>
     <string name="temperature">Temperature</string>
     <string name="glucose">Glucose</string>
+    <string name="systolic_pressure">Systolic pressure</string>
 
 </resources>
