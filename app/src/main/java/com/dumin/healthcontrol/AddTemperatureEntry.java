@@ -99,7 +99,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
             case R.id.save_entry:
                 Temperature tmprt = new Temperature(updateInformMainActivity.getLongTime(),
                         temperature);
-
+                tmprt.addDatabase(getActivity());
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:

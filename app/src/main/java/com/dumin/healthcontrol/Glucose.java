@@ -1,6 +1,6 @@
 package com.dumin.healthcontrol;
 
-import android.util.Log;
+import android.content.Context;
 
 import java.sql.Time;
 
@@ -15,10 +15,6 @@ public class Glucose extends Entry {
     public Glucose(Long longtime, double glc){
         super(longtime);
         glucose = glc;
-
-
-        final String LOG_TAG = "myLogs";
-        Log.d(LOG_TAG, "new Glucose = " + glucose);
     }
 
     @Override
@@ -30,4 +26,11 @@ public class Glucose extends Entry {
         return glucose;
     }
 
+    public void addDatabase(Context context){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addRec("Glucose");
+        database.close();
+    }
 }

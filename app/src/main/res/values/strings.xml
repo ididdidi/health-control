@@ -12,4 +12,7 @@
     <string name="glucose">Glucose</string>
     <string name="systolic_pressure">Systolic pressure</string>
 
+    <string name="add_record">Добавить запись</string>
+    <string name="delete_record">Удалить запись</string>
+
 </resources>

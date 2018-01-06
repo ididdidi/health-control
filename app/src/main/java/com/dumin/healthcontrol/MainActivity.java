@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(data == null) {return;}
         if(data.getBooleanExtra("update",false)){
-            setupViewPager(viewPager);
+            this.getSupportLoaderManager().getLoader(0).forceLoad();
         }
     }
 

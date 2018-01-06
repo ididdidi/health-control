@@ -1,6 +1,6 @@
 package com.dumin.healthcontrol;
 
-import android.util.Log;
+import android.content.Context;
 
 import java.sql.Time;
 
@@ -15,10 +15,6 @@ public class Temperature  extends Entry {
     public Temperature(Long longtime, double tmprt){
         super(longtime);
         temperature = tmprt;
-
-
-        final String LOG_TAG = "myLogs";
-        Log.d(LOG_TAG, "new Temperature = " + temperature);
     }
 
     @Override
@@ -30,4 +26,11 @@ public class Temperature  extends Entry {
         return temperature;
     }
 
+    public void addDatabase(Context context){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addRec("Temperature");
+        database.close();
+    }
 }

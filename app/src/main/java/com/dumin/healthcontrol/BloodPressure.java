@@ -1,5 +1,7 @@
 package com.dumin.healthcontrol;
 
+import android.content.Context;
+
 import java.sql.Time;
 
 /**
@@ -41,5 +43,13 @@ public class BloodPressure extends Entry {
 
     public int getPulse() {
         return pulse;
+    }
+
+    public void addDatabase(Context context){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addRec("BloodPressure");
+        database.close();
     }
 }

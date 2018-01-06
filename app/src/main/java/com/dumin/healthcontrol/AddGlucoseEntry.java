@@ -104,9 +104,8 @@ public class AddGlucoseEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                Glucose glc = new Glucose(updateInformMainActivity.getLongTime(),
-                        glucose);
-
+                Glucose glc = new Glucose(updateInformMainActivity.getLongTime(), glucose);
+                glc.addDatabase(getActivity());
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:

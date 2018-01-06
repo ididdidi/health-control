@@ -100,7 +100,7 @@ public class AddBloodPressureEntry extends Fragment {
             case R.id.save_entry:
                 BloodPressure bloodPressure = new BloodPressure(updateInformMainActivity.getLongTime(),
                         numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
-
+                        bloodPressure.addDatabase(getActivity());
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
