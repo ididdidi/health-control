@@ -28,11 +28,6 @@ public class BloodPressure extends Entry {
         this.pulse = pulse;
     }
 
-    @Override
-    public Time getTime() {
-        return super.getTime();
-    }
-
     public int getSystolicPressure() {
         return systolicPressure;
     }
@@ -49,7 +44,7 @@ public class BloodPressure extends Entry {
         Database database;
         database = new Database(context);
         database.open();
-        database.addRec("BloodPressure");
+        database.addBloodPressure(systolicPressure,diastolicPressure,pulse,3, 233);
         database.close();
     }
 }

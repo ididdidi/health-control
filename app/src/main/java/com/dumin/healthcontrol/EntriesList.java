@@ -32,6 +32,10 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     Context context;
     private static final int CM_DELETE_ID = 1;
+    public static final String COLUMN_VALUE_TXT = "Value_to_txt";
+    public static final String COLUMN_OVERALL_HEALTH = "Overall_health";
+    public static final String COLUMN_TIME_TXT = "Time_txt";
+
     ListView lvData;
     Database database;
     SimpleCursorAdapter scAdapter;
@@ -58,8 +62,8 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         View view = inflater.inflate(R.layout.entries_list, container, false);
 
         // формируем столбцы сопоставления
-        String[] from = new String[] {Database.COLUMN_TXT };
-        int[] to = new int[] { R.id.tvText };
+        String[] from = new String[] {COLUMN_VALUE_TXT, Database.COLUMN_HEALTH, Database.COLUMN_TIME};
+        int[] to = new int[] { R.id.value_txt, R.id.overall_health, R.id.time_txt};
 
         // создаем адаптер и настраиваем список
         scAdapter = new SimpleCursorAdapter(context, R.layout.entries_list_item, null, from, to, 0);
@@ -130,7 +134,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
         @Override
         public Cursor loadInBackground() {
-            Cursor cursor = db.getAllData();
+            Cursor cursor = db.getBloodPressure();
             return cursor;
         }
 

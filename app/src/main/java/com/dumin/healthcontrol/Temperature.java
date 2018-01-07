@@ -30,7 +30,7 @@ public class Temperature  extends Entry {
         Database database;
         database = new Database(context);
         database.open();
-        database.addRec("Temperature");
+        database.addBloodPressure(120,80, 70,3, 23.3);
         database.close();
     }
 }

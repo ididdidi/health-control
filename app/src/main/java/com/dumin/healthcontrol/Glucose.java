@@ -17,10 +17,10 @@ public class Glucose extends Entry {
         glucose = glc;
     }
 
-    @Override
-    public Time getTime() {
-        return super.getTime();
-    }
+//    @Override
+//    public Time getTime() {
+//        return super.getTime();
+//    }
 
     public double getGlucose() {
         return glucose;
@@ -30,7 +30,7 @@ public class Glucose extends Entry {
         Database database;
         database = new Database(context);
         database.open();
-        database.addRec("Glucose");
+        database.addBloodPressure(120,80, 70,3, 23.3);
         database.close();
     }
 }

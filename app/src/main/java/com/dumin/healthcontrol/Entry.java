@@ -7,7 +7,7 @@ import java.sql.Time;
  */
 
 public abstract class Entry {
-    private Time time;
+    protected Time time;
 
     protected Entry(Time time){
         this.time = time;
