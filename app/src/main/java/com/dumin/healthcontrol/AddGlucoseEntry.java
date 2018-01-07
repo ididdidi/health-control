@@ -2,6 +2,7 @@ package com.dumin.healthcontrol;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,7 @@ public class AddGlucoseEntry extends Fragment {
     private HorizontalWheelView horizontalWheelView;
     private TextView tvGlucose;
     private double glucose;
+    private final double ten = 10.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class AddGlucoseEntry extends Fragment {
     }
 
     private void updateValue() {
-        glucose = horizontalWheelView.getDegreesAngle() / 10.0;
+        glucose = horizontalWheelView.getDegreesAngle() / ten;
     }
 
     private void updateText() {
@@ -104,8 +106,7 @@ public class AddGlucoseEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                Glucose glc = new Glucose(updateInformMainActivity.getLongTime(), glucose);
-                glc.addDatabase(getActivity());
+                addDatabase(getActivity(), updateInformMainActivity.getLongTime(), glucose);
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -113,4 +114,11 @@ public class AddGlucoseEntry extends Fragment {
         }
     }
 
+    public void addDatabase(Context context, Long longtime, double glc){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addGlucose(glc,3, longtime);
+        database.close();
+    }
 }

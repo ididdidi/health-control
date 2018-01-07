@@ -68,8 +68,6 @@ public class Database {
                     ");";
 
     private final Context mCtx;
-
-
     private DBHelper mDBHelper;
     private SQLiteDatabase mDB;
 
@@ -89,30 +87,76 @@ public class Database {
     }
 
     // получить все данные из таблицы DB_TABLE
-//    public Cursor getAllData() {
-//        return mDB.query(DB_TABLE, null, null, null, null, null, null);
-//    }
 
-    public Cursor getBloodPressure() {
-        String[] columns  = { COLUMN_ID , COLUMN_SYSTOLIC_PRESSURE + " || ' ' || " + COLUMN_PULSE + " as "+ EntriesList.COLUMN_VALUE_TXT, COLUMN_HEALTH, COLUMN_TIME};
+    public Cursor getBloodPressure(String columnValues, String columnHealth, String columnTime) {
+        String requestValues =  COLUMN_SYSTOLIC_PRESSURE + " || '/' || " + COLUMN_DIASTOLIC_PRESSURE +
+                " || ' ' || " + COLUMN_PULSE + " as " + columnValues;
+        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
+        String requestTime = COLUMN_TIME + " as "+ columnTime;
+        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+
         return mDB.query(BP_TABLE, columns, null, null, null, null, null);
     }
 
+    public Cursor getGlucose(String columnValues, String columnHealth, String columnTime) {
+        String requestValues = COLUMN_GLUCOSE_LEVELS + " as "+ columnValues;
+        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
+        String requestTime = COLUMN_TIME + " as "+ columnTime;
+        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+        return mDB.query(GLC_TABLE, columns, null, null, null, null, null);
+    }
+
+    public Cursor getTemperature(String columnValues, String columnHealth, String columnTime) {
+        String requestValues = COLUMN_BODY_TEMPERATURE + " as "+ columnValues;
+        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
+        String requestTime = COLUMN_TIME + " as "+ columnTime;
+        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+        return mDB.query(TMPR_TABLE, columns, null, null, null, null, null);
+    }
+
     // добавить запись в DB_TABLE
-    public void addBloodPressure(int sp, int dp, int p, int oh, double time) {
+    public void addBloodPressure(int systolicPressure, int diastolicPressure,
+                                 int pulse, int overallHealth, double time) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_SYSTOLIC_PRESSURE, sp);
-        cv.put(COLUMN_DIASTOLIC_PRESSURE, dp);
-        cv.put(COLUMN_PULSE, p);
-        cv.put(COLUMN_HEALTH, oh);
+        cv.put(COLUMN_SYSTOLIC_PRESSURE, systolicPressure);
+        cv.put(COLUMN_DIASTOLIC_PRESSURE, diastolicPressure);
+        cv.put(COLUMN_PULSE, pulse);
+        cv.put(COLUMN_HEALTH, overallHealth);
         cv.put(COLUMN_TIME, time);
         mDB.insert(BP_TABLE, null, cv);
-        Log.d(LOG_TAG, "addBloodPressure(SQLiteDatabase db)");
+    }
+
+    public void addGlucose(double glucose, int overallHealth, double time) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_GLUCOSE_LEVELS, glucose);
+        cv.put(COLUMN_HEALTH, overallHealth);
+        cv.put(COLUMN_TIME, time);
+        mDB.insert(GLC_TABLE, null, cv);
+    }
+
+    public void addTemperature(double temperature, int overallHealth, double time) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_BODY_TEMPERATURE, temperature);
+        cv.put(COLUMN_HEALTH, overallHealth);
+        cv.put(COLUMN_TIME, time);
+        mDB.insert(TMPR_TABLE, null, cv);
     }
 
     // удалить запись из DB_TABLE
-    public void delRec(long id) {
-        mDB.delete(BP_TABLE, COLUMN_ID + " = " + id, null);
+    public void delRec(String measurement, long id) {
+        switch (measurement) {
+            case MainActivity.BLOOD_PRESSURE:
+                mDB.delete(BP_TABLE, COLUMN_ID + " = " + id, null);
+                break;
+            case MainActivity.GLUCOSE:
+                mDB.delete(GLC_TABLE, COLUMN_ID + " = " + id, null);
+                break;
+            case MainActivity.TEMPERATURE:
+                mDB.delete(TMPR_TABLE, COLUMN_ID + " = " + id, null);
+                break;
+            default:
+                break;
+        }
     }
 
     // класс по созданию и управлению БД
@@ -131,9 +175,6 @@ public class Database {
             db.execSQL(DB_CREATE_GLC_TABLE);
             db.execSQL(DB_CREATE_TMPR_TABLE);
             db.execSQL(DB_CREATE_OVERALL_HEALTH);
-//            for (int i = 1; i < 5; i++) {
-//                addBloodPressure(120+i, 80+i, 70+i, i, 1.0+i);
-//            }
 
             Log.d(LOG_TAG, "onCreate(SQLiteDatabase db)");
         }

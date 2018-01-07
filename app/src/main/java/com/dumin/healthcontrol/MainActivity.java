@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra(APP_PREFERENCES, LoadPreferences(MEASUREMENT));
+                intent.putExtra(APP_PREFERENCES, loadPreferences(MEASUREMENT));
                 startActivityForResult(intent, 1);
             }
         });
@@ -100,27 +100,20 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         switch(item.getItemId()){
             case R.id.blood_pressure: {
-                SavePreferences(MEASUREMENT, BLOOD_PRESSURE);
-                // Handle the camera action
-                setupViewPager(viewPager);
+                savePreferences(MEASUREMENT, BLOOD_PRESSURE);
                 break;
             }
             case R.id.glucose: {
-                SavePreferences(MEASUREMENT, GLUCOSE);
-                // Handle the camera action
-                setupViewPager(viewPager);
+                savePreferences(MEASUREMENT, GLUCOSE);
                 break;
             }
             case R.id.temperature: {
-                SavePreferences(MEASUREMENT, TEMPERATURE);
-                // Handle the camera action
-                setupViewPager(viewPager);
+                savePreferences(MEASUREMENT, TEMPERATURE);
                 break;
             }
-        default: SavePreferences(MEASUREMENT, BLOOD_PRESSURE);
-            // Handle the camera action
+        default: savePreferences(MEASUREMENT, BLOOD_PRESSURE);
         }
-
+        this.getSupportLoaderManager().getLoader(0).forceLoad();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -144,16 +137,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void SavePreferences(String key, String value) {
+    public void savePreferences(String key, String value) {
         appPref = this.getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = appPref.edit();
         editor.putString(key, value);
         editor.apply();
-        Log.wtf(getClass().getName(), LoadPreferences(MEASUREMENT));
+        Log.wtf(getClass().getName(), loadPreferences(MEASUREMENT));
     }
 
-    public String LoadPreferences(String key) {
+    public String loadPreferences(String key) {
         appPref = this.getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         switch (key) {

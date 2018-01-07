@@ -2,6 +2,7 @@ package com.dumin.healthcontrol;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +25,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     private double temperature;
     private TextView tvTemper;
     private double minTemper = 34.0;
-    private double ten = 10.0;
+    private final double ten = 10.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,13 +98,20 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                Temperature tmprt = new Temperature(updateInformMainActivity.getLongTime(),
+                addDatabase(getActivity(), updateInformMainActivity.getLongTime(),
                         temperature);
-                tmprt.addDatabase(getActivity());
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void addDatabase(Context context, Long longtime, double tmprt){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addTemperature(tmprt,3, longtime);
+        database.close();
     }
 }

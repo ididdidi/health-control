@@ -2,6 +2,7 @@ package com.dumin.healthcontrol;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,9 +99,8 @@ public class AddBloodPressureEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                BloodPressure bloodPressure = new BloodPressure(updateInformMainActivity.getLongTime(),
+                addDatabase(getActivity(), updateInformMainActivity.getLongTime(),
                         numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
-                        bloodPressure.addDatabase(getActivity());
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -108,4 +108,11 @@ public class AddBloodPressureEntry extends Fragment {
         }
     }
 
+    public void addDatabase(Context context, Long longtime, int sPressure, int dPressure, int pulse){
+        Database database;
+        database = new Database(context);
+        database.open();
+        database.addBloodPressure(sPressure,dPressure,pulse,3, longtime);
+        database.close();
+    }
 }

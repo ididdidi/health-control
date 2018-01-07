@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="6"
         android:textAlignment="center"
+        android:textSize="32sp"
         android:text="Value"
         />
     <TextView

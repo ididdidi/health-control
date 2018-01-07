@@ -30,11 +30,11 @@ import java.util.concurrent.TimeUnit;
 
 public class EntriesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    Context context;
+    private Context ativityContext;
     private static final int CM_DELETE_ID = 1;
-    public static final String COLUMN_VALUE_TXT = "Value_to_txt";
+    public static final String COLUMN_VALUE = "Value";
     public static final String COLUMN_OVERALL_HEALTH = "Overall_health";
-    public static final String COLUMN_TIME_TXT = "Time_txt";
+    public static final String COLUMN_TIME = "Time";
 
     ListView lvData;
     Database database;
@@ -43,10 +43,10 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getActivity();
+       ativityContext = getActivity();
 
         // открываем подключение к БД
-        database = new Database(context);
+        database = new Database(ativityContext);
         database.open();
 
         Log.d(LOG_TAG, "EntriesList onCreate");
@@ -55,18 +55,16 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        SharedPreferences sp = context.getSharedPreferences(MainActivity.APP_PREFERENCES, 0);
-        Toast.makeText(context, sp.getString(MainActivity.MEASUREMENT,
-                MainActivity.BLOOD_PRESSURE), Toast.LENGTH_SHORT).show();
+        Toast.makeText(ativityContext, loadPreferences(MainActivity.MEASUREMENT), Toast.LENGTH_SHORT).show();
 
         View view = inflater.inflate(R.layout.entries_list, container, false);
 
         // формируем столбцы сопоставления
-        String[] from = new String[] {COLUMN_VALUE_TXT, Database.COLUMN_HEALTH, Database.COLUMN_TIME};
+        String[] from = new String[] {COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME};
         int[] to = new int[] { R.id.value_txt, R.id.overall_health, R.id.time_txt};
 
         // создаем адаптер и настраиваем список
-        scAdapter = new SimpleCursorAdapter(context, R.layout.entries_list_item, null, from, to, 0);
+        scAdapter = new SimpleCursorAdapter(ativityContext, R.layout.entries_list_item, null, from, to, 0);
         lvData = (ListView) view.findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
 
@@ -92,7 +90,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                     .getMenuInfo();
             // извлекаем id записи и удаляем соответствующую запись в БД
-            database.delRec(acmi.id);
+            database.delRec(loadPreferences(MainActivity.MEASUREMENT), acmi.id);
             // получаем новый курсор с данными
             getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
@@ -110,7 +108,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(context, database);
+        return new MyCursorLoader(ativityContext, database);
     }
 
     @Override
@@ -125,22 +123,51 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     static class MyCursorLoader extends CursorLoader {
 
+        Context context;
         Database db;
 
         public MyCursorLoader(Context context, Database db) {
             super(context);
             this.db = db;
+            this.context = context;
         }
 
         @Override
         public Cursor loadInBackground() {
-            Cursor cursor = db.getBloodPressure();
+            Cursor cursor;
+            SharedPreferences appPref;
+            appPref = context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+            switch (appPref.getString(MainActivity.MEASUREMENT, MainActivity.BLOOD_PRESSURE)) {
+                case MainActivity.APP_PREFERENCES:
+                    cursor = db.getBloodPressure(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                    break;
+                case MainActivity.GLUCOSE:
+                    cursor = db.getGlucose(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                    break;
+                case MainActivity.TEMPERATURE:
+                    cursor = db.getTemperature(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                    break;
+                default: cursor = db.getBloodPressure(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+            }
             return cursor;
         }
 
     }
 
+    public String loadPreferences(String key) {
+        SharedPreferences appPref;
+        appPref = ativityContext.getSharedPreferences(
+                MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+        switch (key) {
+            case MainActivity.MEASUREMENT:
+                return appPref.getString(key,
+                        MainActivity.BLOOD_PRESSURE);
+            default:
+                return "LoadPreferences no correct";
+        }
 
+    }
 
     final String LOG_TAG = "myLogs";
 
