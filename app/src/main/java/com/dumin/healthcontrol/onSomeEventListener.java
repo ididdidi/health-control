@@ -1,7 +1,7 @@
 package com.dumin.healthcontrol;
 
 /**
- * Created by operator on 04.01.2018.
+ * Feedback to Activity
  */
 
 public interface onSomeEventListener {

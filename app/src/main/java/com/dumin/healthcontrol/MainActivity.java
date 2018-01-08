@@ -3,6 +3,7 @@ package com.dumin.healthcontrol;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -20,38 +21,35 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SharedPreferences appPref;
+    private SharedPreferences appPref;
     final static String APP_PREFERENCES = "app_preferences";
     final static String MEASUREMENT = "measurement";
     final static String BLOOD_PRESSURE = "blood_pressure";
     final static String GLUCOSE = "glucose";
     final static String TEMPERATURE = "temperature";
 
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Creates the Toolbar and NavigationView
+        onCreateNavigationView();
+
+        // Button add new entries
+        onCreateActionButton();
+
+        // Creates Tabs with pages
+        onCreateTabLayout();
+
+    }
+
+    // Creates the Toolbar and NavigationView
+    private void onCreateNavigationView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_entry_button);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra(APP_PREFERENCES, loadPreferences(MEASUREMENT));
-                startActivityForResult(intent, 1);
-            }
-        });
-        // for rendering pages in TabLayout
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setOffscreenPageLimit(2); // Limit is all
-        setupViewPager(viewPager);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
-        tabLayout.setupWithViewPager(viewPager);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -61,6 +59,42 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    // Button add new entries
+    private void onCreateActionButton() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_entry_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
+                intent.putExtra(APP_PREFERENCES, loadPreferences(MEASUREMENT));
+                startActivityForResult(intent, 1);
+            }
+        });
+    }
+
+    // Creates Tabs with pages
+    private void onCreateTabLayout() {
+
+        // Add pages in fragments
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(2); // Limit is all
+        setupViewPager(viewPager);
+
+        // for rendering pages in TabLayout
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+    // creates pages(fragments) and fills ViewPager
+    private void setupViewPager(@NonNull ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        adapter.addFragment(new EntriesList(), "Data");
+        adapter.addFragment(new Graphics(), "Graphics");
+        adapter.addFragment(new Statistics(), "Statistics");
+
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -113,22 +147,15 @@ public class MainActivity extends AppCompatActivity
             }
         default: savePreferences(MEASUREMENT, BLOOD_PRESSURE);
         }
+        // The message for the loader that the data has been changed
         this.getSupportLoaderManager().getLoader(0).forceLoad();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-                adapter.addFragment(new EntriesList(), "Data");
-                adapter.addFragment(new Graphics(), "Graphics");
-                adapter.addFragment(new Statistics(), "Statistics");
-
-        viewPager.setAdapter(adapter);
-    }
-
+    // gets the result from the intent
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(data == null) {return;}
@@ -137,7 +164,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void savePreferences(String key, String value) {
+    //Allows you to make settings app
+    private void savePreferences(@NonNull String key, @NonNull String value) {
         appPref = this.getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = appPref.edit();
@@ -146,7 +174,8 @@ public class MainActivity extends AppCompatActivity
         Log.wtf(getClass().getName(), loadPreferences(MEASUREMENT));
     }
 
-    public String loadPreferences(String key) {
+    //Reads the application settings
+    private String loadPreferences(@NonNull String key) {
         appPref = this.getSharedPreferences(
                 APP_PREFERENCES, MODE_PRIVATE);
         switch (key) {

@@ -32,9 +32,9 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     private Context ativityContext;
     private static final int CM_DELETE_ID = 1;
-    public static final String COLUMN_VALUE = "Value";
-    public static final String COLUMN_OVERALL_HEALTH = "Overall_health";
-    public static final String COLUMN_TIME = "Time";
+    private static final String COLUMN_VALUE = "Value";
+    private static final String COLUMN_OVERALL_HEALTH = "Overall_health";
+    private static final String COLUMN_TIME = "Time";
 
     ListView lvData;
     Database database;
@@ -45,17 +45,15 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         super.onCreate(savedInstanceState);
        ativityContext = getActivity();
 
-        // открываем подключение к БД
+        // open the DB connection
         database = new Database(ativityContext);
         database.open();
 
-        Log.d(LOG_TAG, "EntriesList onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Toast.makeText(ativityContext, loadPreferences(MainActivity.MEASUREMENT), Toast.LENGTH_SHORT).show();
 
         View view = inflater.inflate(R.layout.entries_list, container, false);
 
@@ -74,7 +72,6 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         // создаем лоадер для чтения данных
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
 
-        Log.d(LOG_TAG, "EntriesList onCreateView");
         return view;
     }
 
@@ -102,8 +99,6 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         super.onDestroy();
         // закрываем подключение при выходе
         database.close();
-
-        Log.d(LOG_TAG, "EntriesList onDestroy");
     }
 
     @Override
@@ -167,49 +162,6 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
                 return "LoadPreferences no correct";
         }
 
-    }
-
-    final String LOG_TAG = "myLogs";
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        Log.d(LOG_TAG, "EntriesList onAttach");
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG, "EntriesList onActivityCreated");
-    }
-
-    public void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG, "EntriesList onStart");
-    }
-
-    public void onResume() {
-        super.onResume();
-        Log.d(LOG_TAG, "EntriesList onResume");
-    }
-
-    public void onPause() {
-        super.onPause();
-        Log.d(LOG_TAG, "EntriesList onPause");
-    }
-
-    public void onStop() {
-        super.onStop();
-        Log.d(LOG_TAG, "EntriesList onStop");
-    }
-
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(LOG_TAG, "EntriesList onDestroyView");
-    }
-
-    public void onDetach() {
-        super.onDetach();
-        Log.d(LOG_TAG, "EntriesList onDetach");
     }
 
 }

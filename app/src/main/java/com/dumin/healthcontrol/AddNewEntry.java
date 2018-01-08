@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.view.Display;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +15,7 @@ import android.widget.Toast;
 public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
     private final String TIME = "time";
-    long longTime;
+    private long longTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,31 +23,50 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         setContentView(R.layout.activity_add_new_entry);
 
         // Back arrow in action bar
-        ActionBar actionBar =getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        onCreateActionBar();
 
         Time androidTime = new Time(Time.getCurrentTimezone());
         androidTime.setToNow();
 
+        // To set the current time or taken from Bundle
+        setKnownTime(savedInstanceState, androidTime);
+
+        // Display date and  time on screen
+        onCreateTimeView(androidTime);
+
+    }
+
+    private void onCreateActionBar(){
+        // Back arrow in action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    // To set the current time or taken from Bundle
+    private void setKnownTime(Bundle savedInstanceState, @NonNull Time androidTime) {
         Intent intent = getIntent();
-        Toast.makeText(this, intent.getStringExtra(MainActivity.APP_PREFERENCES),
-                Toast.LENGTH_SHORT).show();
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
             longTime = androidTime.toMillis(false);
-        } else{
-            longTime = savedInstanceState.getLong(TIME,androidTime.toMillis(false));
+        } else {
+            longTime = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
             androidTime.set(longTime);
         }
+    }
+
+    // Display date and  time on screen
+    private void onCreateTimeView(@NonNull Time androidTime){
 
         TextView dateTextView = (TextView) findViewById(R.id.date);
         dateTextView.setText(androidTime.format("%d.%m.%Y"));
+
         TextView timeTextView = (TextView) findViewById(R.id.time);
         timeTextView.setText(androidTime.format("%H:%M"));
     }
 
-    public void setupAddEntryFragment (@NonNull String measurement){
+    // chooses the fragment to display the current measurement
+    private void setupAddEntryFragment (@NonNull String measurement){
         FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
 
         switch (measurement) {

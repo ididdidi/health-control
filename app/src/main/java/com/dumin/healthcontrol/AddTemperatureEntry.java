@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,13 +16,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
- * Created by operator on 04.01.2018.
+ * Allows you to add the values of temperature and heart rate in Entry list.
  */
 
 public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
     private onSomeEventListener updateInformMainActivity;
-    final static String TEMPERATURE = "temperature";
+    private final static String TEMPERATURE = "temperature";
     private double temperature;
     private TextView tvTemper;
     private double minTemper = 34.0;
@@ -31,12 +32,14 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // To set the current values or taken from Bundle
         if (savedInstanceState == null) {
             temperature = 36.6;
         } else {
             temperature = savedInstanceState.getDouble(TEMPERATURE, 36.6);
         }
-        setHasOptionsMenu(true);
+
+        setHasOptionsMenu(true);    // In order to get back
     }
 
     @Override
@@ -78,7 +81,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     }
 
     // Updating the information in the fragments to MainActivity
-
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_add_new_entery, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -107,9 +110,8 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
         }
     }
 
-    public void addDatabase(Context context, Long longtime, double tmprt){
-        Database database;
-        database = new Database(context);
+    private void addDatabase(@NonNull Context context, long longtime, double tmprt){
+        Database database = new Database(context);
         database.open();
         database.addTemperature(tmprt,3, longtime);
         database.close();

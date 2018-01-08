@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.NumberPicker;
 
 /**
- * Created by operator on 01.01.2018.
+ * Allows you to add the values of blood pressure and heart rate in Entry list.
  */
 
 public class AddBloodPressureEntry extends Fragment {
@@ -33,8 +34,8 @@ public class AddBloodPressureEntry extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // To set the current values or taken from Bundle
         if (savedInstanceState == null) {
-
             systolic_pressure = 120;
             diastolic_pressure = 80;
             pulse = 70;
@@ -43,7 +44,8 @@ public class AddBloodPressureEntry extends Fragment {
             diastolic_pressure = savedInstanceState.getInt(DIASTOLIC_PRESSURE, 80);
             pulse = savedInstanceState.getInt(PULSE, 70);
         }
-        setHasOptionsMenu(true);
+
+        setHasOptionsMenu(true);    // In order to get back
     }
 
     @Override
@@ -79,7 +81,7 @@ public class AddBloodPressureEntry extends Fragment {
     }
 
     // Updating the information in the fragments to MainActivity
-
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_add_new_entery, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -99,8 +101,10 @@ public class AddBloodPressureEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
+                // Add the values in the database
                 addDatabase(getActivity(), updateInformMainActivity.getLongTime(),
                         numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
+                // Sends a signal about the successful adding entry
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -108,9 +112,9 @@ public class AddBloodPressureEntry extends Fragment {
         }
     }
 
-    public void addDatabase(Context context, Long longtime, int sPressure, int dPressure, int pulse){
-        Database database;
-        database = new Database(context);
+    // Add the values in the database
+    private void addDatabase(@NonNull Context context, long longtime, int sPressure, int dPressure, int pulse){
+        Database database = new Database(context);
         database.open();
         database.addBloodPressure(sPressure,dPressure,pulse,3, longtime);
         database.close();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +18,7 @@ import com.github.shchurov.horizontalwheelview.HorizontalWheelView;
 import java.util.Locale;
 
 /**
- * Created by operator on 05.01.2018.
+ * Allows you to add the values of glucose and heart rate in Entry list.
  */
 
 public class AddGlucoseEntry extends Fragment {
@@ -33,13 +34,14 @@ public class AddGlucoseEntry extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // To set the current values or taken from Bundle
         if (savedInstanceState == null) {
             glucose = 5.6;
         } else {
             glucose = savedInstanceState.getDouble(GLUCOSE, 5.6);
         }
-        setHasOptionsMenu(true);
 
+        setHasOptionsMenu(true);    // In order to get back
     }
 
     @Override
@@ -55,11 +57,12 @@ public class AddGlucoseEntry extends Fragment {
         tvGlucose = (TextView) v.findViewById(R.id.tv_glucose_value);
         tvGlucose.setText(String.valueOf(glucose));
 
-        setupListeners();
-        updateText();
+        setupListeners();   // Starts the listener
+        updateText();       // Necessary for correct display after screen rotation
         return v;
     }
 
+    // Listening to touch the screen and change the values
     private void setupListeners() {
         horizontalWheelView.setListener(new HorizontalWheelView.Listener() {
             @Override
@@ -70,10 +73,12 @@ public class AddGlucoseEntry extends Fragment {
         });
     }
 
+    // Sets a new value of the measurement result
     private void updateValue() {
         glucose = horizontalWheelView.getDegreesAngle() / ten;
     }
 
+    // Displays change parameter values in TextView
     private void updateText() {
         String text = String.format(Locale.US, "%.1f", glucose);
         tvGlucose.setText(text);
@@ -86,7 +91,7 @@ public class AddGlucoseEntry extends Fragment {
     }
 
     // Updating the information in the fragments to MainActivity
-
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_add_new_entery, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -113,10 +118,9 @@ public class AddGlucoseEntry extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    public void addDatabase(Context context, Long longtime, double glc){
-        Database database;
-        database = new Database(context);
+    // Add the values in the database
+    private void addDatabase(@NonNull Context context, long longtime, double glc){
+        Database database = new Database(context);
         database.open();
         database.addGlucose(glc,3, longtime);
         database.close();
