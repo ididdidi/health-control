@@ -4,29 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-    <TextView
-        android:id="@+id/value_txt"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="6"
+        android:layout_weight="6">
+    <TextView
+        android:id="@+id/value_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="32sp"
         android:text="Value"
         />
-    <TextView
-        android:id="@+id/overall_health"
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAlignment="center"
-        android:text="Overall health"
-        />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+    <ImageView
+        android:id="@+id/overall_health"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_sentiment_neutral_black_24dp">
+    </ImageView>
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="3">
     <TextView
         android:id="@+id/time_txt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
         android:textAlignment="center"
-        android:text="Date time"
-        />
+        android:text="Date time" />
+</LinearLayout>
+
 </LinearLayout>

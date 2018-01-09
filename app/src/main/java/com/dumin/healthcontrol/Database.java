@@ -14,10 +14,15 @@ import android.support.annotation.NonNull;
 
 public class Database {
 
+
+    private final Context mCtx;
+    private DBHelper mDBHelper;
+    private SQLiteDatabase mDB;
+
+    // The names of tables and fields database
     private static final String DB_NAME = "HealthControlDB";
     private static final int DB_VERSION = 1;
 
-    private static final String OVERALL_HEALTH ="Overall_health";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_HEALTH = "Health";
 
@@ -35,12 +40,6 @@ public class Database {
     private static final String COLUMN_TIME = "Time";
 
     // The queries to create tables
-    // Overall health
-    private static final String DB_CREATE_OVERALL_HEALTH =
-            "create table " + OVERALL_HEALTH + "(" +
-                    COLUMN_ID + " integer primary key autoincrement, " +
-                    COLUMN_HEALTH + " text" +
-                    ");";
     // Blood_pressure
     private static final String DB_CREATE_BP_TABLE =
             "create table " + BP_TABLE + "(" +
@@ -68,10 +67,13 @@ public class Database {
                     COLUMN_TIME + " real" +
                     ");";
 
-    private final Context mCtx;
-    private DBHelper mDBHelper;
-    private SQLiteDatabase mDB;
+    // The same requests for multiple tables from the database
+    private final String requestHealth = COLUMN_HEALTH + " as ";
 
+    private final String requestTime = "strftime('%d-%m-%Y \n %H:%M', datetime(" + COLUMN_TIME +
+            ", 'unixepoch', 'localtime')) as ";
+
+    // constructor
     public Database(@NonNull Context ctx) {
         mCtx = ctx;
     }
@@ -90,36 +92,50 @@ public class Database {
     // To retrieve data from a table of blood pressure
     public Cursor getBloodPressure(@NonNull String columnValues, @NonNull String columnHealth,
                                    @NonNull String columnTime) {
+
         String requestValues =  COLUMN_SYSTOLIC_PRESSURE + " || '/' || " + COLUMN_DIASTOLIC_PRESSURE +
                 " || ' ' || " + COLUMN_PULSE + " as " + columnValues;
-        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
-        String requestTime = COLUMN_TIME + " as "+ columnTime;
-        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+
+        String[] columns  = {
+                COLUMN_ID ,
+                requestValues,
+                requestHealth + columnHealth,
+                requestTime + columnTime
+        };
 
         return mDB.query(BP_TABLE, columns, null, null, null, null, null);
     }
     // To retrieve data from a table of glucose
     public Cursor getGlucose(@NonNull String columnValues, @NonNull String columnHealth,
                              @NonNull String columnTime) {
-        String requestValues = COLUMN_GLUCOSE_LEVELS + " as "+ columnValues;
-        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
-        String requestTime = COLUMN_TIME + " as "+ columnTime;
-        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+        String requestValues = "round(" + COLUMN_GLUCOSE_LEVELS + ", 1)" + " as "+ columnValues;
+
+        String[] columns  = {
+                COLUMN_ID ,
+                requestValues,
+                requestHealth + columnHealth,
+                requestTime + columnTime
+        };
         return mDB.query(GLC_TABLE, columns, null, null, null, null, null);
     }
     // To retrieve data from a table of temperature
     public Cursor getTemperature(@NonNull String columnValues, @NonNull String columnHealth,
                                  @NonNull String columnTime) {
-        String requestValues = COLUMN_BODY_TEMPERATURE + " as "+ columnValues;
-        String requestHealth = COLUMN_HEALTH + " as "+ columnHealth;
-        String requestTime = COLUMN_TIME + " as "+ columnTime;
-        String[] columns  = { COLUMN_ID , requestValues, requestHealth, requestTime};
+        String requestValues = "round(" + COLUMN_BODY_TEMPERATURE + ", 1)" + " as "+ columnValues;
+
+        String[] columns  = {
+                COLUMN_ID ,
+                requestValues,
+                requestHealth + columnHealth,
+                requestTime + columnTime
+        };
+
         return mDB.query(TMPR_TABLE, columns, null, null, null, null, null);
     }
 
     // to add a record to a table of blood pressure
-    public void addBloodPressure(int systolicPressure, int diastolicPressure,
-                                 int pulse, int overallHealth, double time) {
+    public void addBloodPressure(double time, int overallHealth, int systolicPressure,
+                                 int diastolicPressure, int pulse) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_SYSTOLIC_PRESSURE, systolicPressure);
         cv.put(COLUMN_DIASTOLIC_PRESSURE, diastolicPressure);
@@ -130,7 +146,7 @@ public class Database {
     }
 
     // to add a record to a table of glucose
-    public void addGlucose(double glucose, int overallHealth, double time) {
+    public void addGlucose(double time, int overallHealth, double glucose) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_GLUCOSE_LEVELS, glucose);
         cv.put(COLUMN_HEALTH, overallHealth);
@@ -139,7 +155,7 @@ public class Database {
     }
 
     // to add a record to a table of temperature
-    public void addTemperature(double temperature, int overallHealth, double time) {
+    public void addTemperature(double time, int overallHealth, double temperature) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_BODY_TEMPERATURE, temperature);
         cv.put(COLUMN_HEALTH, overallHealth);
@@ -178,7 +194,6 @@ public class Database {
             db.execSQL(DB_CREATE_BP_TABLE);
             db.execSQL(DB_CREATE_GLC_TABLE);
             db.execSQL(DB_CREATE_TMPR_TABLE);
-            db.execSQL(DB_CREATE_OVERALL_HEALTH);
         }
 
         @Override

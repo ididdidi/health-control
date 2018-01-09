@@ -15,7 +15,8 @@ import android.widget.Toast;
 public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
     private final String TIME = "time";
-    private long longTime;
+    private long timeInSeconds;
+    Time androidTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         // Back arrow in action bar
         onCreateActionBar();
 
-        Time androidTime = new Time(Time.getCurrentTimezone());
+        androidTime = new Time(Time.getCurrentTimezone());
         androidTime.setToNow();
 
         // To set the current time or taken from Bundle
@@ -48,10 +49,10 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         Intent intent = getIntent();
         if (savedInstanceState == null) {
             setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
-            longTime = androidTime.toMillis(false);
+            timeInSeconds = androidTime.toMillis(true)/1000;
         } else {
-            longTime = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
-            androidTime.set(longTime);
+            timeInSeconds = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
+            androidTime.set(timeInSeconds * 1000);
         }
     }
 
@@ -93,7 +94,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(TIME, longTime);
+        outState.putLong(TIME, timeInSeconds);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     }
     // Stealing time from the Activity
     @Override
-    public long getLongTime(){
-        return longTime;
+    public long getTimeInSeconds(){
+        return timeInSeconds;
     }
 }

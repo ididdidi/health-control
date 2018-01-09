@@ -101,8 +101,8 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                addDatabase(getActivity(), updateInformMainActivity.getLongTime(),
-                        temperature);
+                addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
+                        R.drawable.ic_sentiment_neutral_black_24dp, temperature);
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -110,10 +110,10 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
         }
     }
 
-    private void addDatabase(@NonNull Context context, long longtime, double tmprt){
+    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double tmprt){
         Database database = new Database(context);
         database.open();
-        database.addTemperature(tmprt,3, longtime);
+        database.addTemperature(timeInSeconds, overallHealth, tmprt);
         database.close();
     }
 }

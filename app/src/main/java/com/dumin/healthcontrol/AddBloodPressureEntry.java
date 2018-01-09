@@ -102,8 +102,9 @@ public class AddBloodPressureEntry extends Fragment {
         switch (item.getItemId()) {
             case R.id.save_entry:
                 // Add the values in the database
-                addDatabase(getActivity(), updateInformMainActivity.getLongTime(),
-                        numberPicker0.getValue(), numberPicker1.getValue(), numberPicker2.getValue());
+                addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
+                        R.drawable.ic_sentiment_neutral_black_24dp, numberPicker0.getValue(),
+                        numberPicker1.getValue(), numberPicker2.getValue());
                 // Sends a signal about the successful adding entry
                 updateInformMainActivity.someEvent(true);
                 return true;
@@ -113,10 +114,11 @@ public class AddBloodPressureEntry extends Fragment {
     }
 
     // Add the values in the database
-    private void addDatabase(@NonNull Context context, long longtime, int sPressure, int dPressure, int pulse){
+    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth,
+                             int sPressure, int dPressure, int pulse){
         Database database = new Database(context);
         database.open();
-        database.addBloodPressure(sPressure,dPressure,pulse,3, longtime);
+        database.addBloodPressure(timeInSeconds, overallHealth, sPressure, dPressure,pulse);
         database.close();
     }
 }

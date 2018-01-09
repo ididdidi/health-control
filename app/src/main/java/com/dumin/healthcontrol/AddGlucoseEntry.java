@@ -111,7 +111,8 @@ public class AddGlucoseEntry extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_entry:
-                addDatabase(getActivity(), updateInformMainActivity.getLongTime(), glucose);
+                addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
+                        R.drawable.ic_sentiment_neutral_black_24dp, glucose);
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:
@@ -119,10 +120,10 @@ public class AddGlucoseEntry extends Fragment {
         }
     }
     // Add the values in the database
-    private void addDatabase(@NonNull Context context, long longtime, double glc){
+    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double glc){
         Database database = new Database(context);
         database.open();
-        database.addGlucose(glc,3, longtime);
+        database.addGlucose(timeInSeconds, overallHealth, glc);
         database.close();
     }
 }
