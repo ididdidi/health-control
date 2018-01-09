@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -102,7 +101,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
         switch (item.getItemId()) {
             case R.id.save_entry:
                 addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
-                        R.drawable.ic_sentiment_neutral_black_24dp, temperature);
+                        updateInformMainActivity.getOverallHealth(), temperature);
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:

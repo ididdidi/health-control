@@ -70,7 +70,7 @@ public class Database {
     // The same requests for multiple tables from the database
     private final String requestHealth = COLUMN_HEALTH + " as ";
 
-    private final String requestTime = "strftime('%d-%m-%Y \n %H:%M', datetime(" + COLUMN_TIME +
+    private final String requestTime = "strftime('%d.%m.%Y \n %H:%M', datetime(" + COLUMN_TIME +
             ", 'unixepoch', 'localtime')) as ";
 
     // constructor

@@ -112,7 +112,7 @@ public class AddGlucoseEntry extends Fragment {
         switch (item.getItemId()) {
             case R.id.save_entry:
                 addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
-                        R.drawable.ic_sentiment_neutral_black_24dp, glucose);
+                        updateInformMainActivity.getOverallHealth(), glucose);
                 updateInformMainActivity.someEvent(true);
                 return true;
             default:

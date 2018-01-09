@@ -77,7 +77,7 @@ public class AddBloodPressureEntry extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt(SYSTOLIC_PRESSURE, numberPicker0.getValue());
         outState.putInt(DIASTOLIC_PRESSURE, numberPicker1.getValue());
-        outState.putInt(PULSE, numberPicker0.getValue());
+        outState.putInt(PULSE, numberPicker2.getValue());
     }
 
     // Updating the information in the fragments to MainActivity
@@ -103,7 +103,7 @@ public class AddBloodPressureEntry extends Fragment {
             case R.id.save_entry:
                 // Add the values in the database
                 addDatabase(getActivity(), updateInformMainActivity.getTimeInSeconds(),
-                        R.drawable.ic_sentiment_neutral_black_24dp, numberPicker0.getValue(),
+                        updateInformMainActivity.getOverallHealth(), numberPicker0.getValue(),
                         numberPicker1.getValue(), numberPicker2.getValue());
                 // Sends a signal about the successful adding entry
                 updateInformMainActivity.someEvent(true);

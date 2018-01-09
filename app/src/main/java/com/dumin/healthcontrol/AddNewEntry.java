@@ -9,14 +9,16 @@ import android.os.Bundle;
 import android.text.format.Time;
 import android.view.Display;
 import android.view.MenuItem;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
     private final String TIME = "time";
+    private final String OVERALL_HEALTH = "overallHealth";
     private long timeInSeconds;
-    Time androidTime;
+    private int overallHealth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +28,16 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         // Back arrow in action bar
         onCreateActionBar();
 
-        androidTime = new Time(Time.getCurrentTimezone());
-        androidTime.setToNow();
-
-        // To set the current time or taken from Bundle
-        setKnownTime(savedInstanceState, androidTime);
-
         // Display date and  time on screen
-        onCreateTimeView(androidTime);
+        onCreateTimeView(savedInstanceState);
 
+        // chooses the fragment to display the current measurement
+        if(savedInstanceState==null){
+            Intent intent = getIntent();
+            setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
+        }
+
+        onCreateRGOverallHealth(savedInstanceState);
     }
 
     private void onCreateActionBar(){
@@ -42,28 +45,6 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    // To set the current time or taken from Bundle
-    private void setKnownTime(Bundle savedInstanceState, @NonNull Time androidTime) {
-        Intent intent = getIntent();
-        if (savedInstanceState == null) {
-            setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
-            timeInSeconds = androidTime.toMillis(true)/1000;
-        } else {
-            timeInSeconds = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
-            androidTime.set(timeInSeconds * 1000);
-        }
-    }
-
-    // Display date and  time on screen
-    private void onCreateTimeView(@NonNull Time androidTime){
-
-        TextView dateTextView = (TextView) findViewById(R.id.date);
-        dateTextView.setText(androidTime.format("%d.%m.%Y"));
-
-        TextView timeTextView = (TextView) findViewById(R.id.time);
-        timeTextView.setText(androidTime.format("%H:%M"));
     }
 
     // chooses the fragment to display the current measurement
@@ -90,11 +71,71 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         frTransaction.commit();
     }
 
+    // To set the current time or taken from Bundle
+    private void setKnownTime(Bundle savedInstanceState, @NonNull Time androidTime) {
+        if (savedInstanceState == null) {
+            timeInSeconds = androidTime.toMillis(true)/1000;
+        } else {
+            timeInSeconds = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
+            androidTime.set(timeInSeconds * 1000);
+        }
+    }
+
+    // Display date and  time on screen
+    private void onCreateTimeView(Bundle savedInstanceState){
+
+        Time androidTime = new Time(Time.getCurrentTimezone());
+        androidTime.setToNow();
+
+        // To set the current time or taken from Bundle
+        setKnownTime(savedInstanceState, androidTime);
+
+        TextView dateTextView = (TextView) findViewById(R.id.date);
+        dateTextView.setText(androidTime.format("%d.%m.%Y"));
+
+        TextView timeTextView = (TextView) findViewById(R.id.time);
+        timeTextView.setText(androidTime.format("%H:%M"));
+    }
+
+    private void onCreateRGOverallHealth(Bundle savedInstanceState){
+        if (savedInstanceState == null) {
+            overallHealth = R.drawable.ic_sentiment_neutral_red;
+        }else{
+            overallHealth = savedInstanceState.getInt(OVERALL_HEALTH, R.drawable.ic_sentiment_neutral_red);
+        }
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rg_overallHealth);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                switch (checkedId) {
+                    case R.id.sentiment_very_dissatisfied:
+                        overallHealth = R.drawable.ic_sentiment_very_dissatisfied_red;
+                        break;
+                    case R.id.sentiment_dissatisfied:
+                        overallHealth = R.drawable.ic_sentiment_dissatisfied_red;
+                        break;
+                    case R.id.sentiment_neutral:
+                        overallHealth = R.drawable.ic_sentiment_neutral_red;
+                        break;
+                    case R.id.sentiment_satisfied:
+                        overallHealth = R.drawable.ic_sentiment_satisfied_red;
+                        break;
+                    case R.id.sentiment_very_satisfied:
+                        overallHealth = R.drawable.ic_sentiment_very_satisfied_red;
+                        break;
+                }
+            }
+        });
+
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(TIME, timeInSeconds);
+        outState.putInt(OVERALL_HEALTH, overallHealth);
     }
 
     @Override
@@ -119,5 +160,9 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     @Override
     public long getTimeInSeconds(){
         return timeInSeconds;
+    }
+    @Override
+    public int getOverallHealth(){
+        return overallHealth;
     }
 }
