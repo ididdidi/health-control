@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public class EntriesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private Context ativityContext;
+    private Context activityContext;
     private static final int CM_DELETE_ID = 1;
     private static final String COLUMN_VALUE = "Value";
     private static final String COLUMN_OVERALL_HEALTH = "Overall_health";
@@ -43,10 +44,10 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       ativityContext = getActivity();
+        activityContext = getActivity();
 
         // open the DB connection
-        database = new Database(ativityContext);
+        database = new Database(activityContext);
         database.open();
 
     }
@@ -57,12 +58,15 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
         View view = inflater.inflate(R.layout.entries_list, container, false);
 
+        TextView viewMs = (TextView) view.findViewById(R.id.tv_measurement);
+        viewMs.setText(loadPreferences(MainActivity.MEASUREMENT));
+
         // формируем столбцы сопоставления
         String[] from = new String[] {COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME};
         int[] to = new int[] { R.id.value_txt, R.id.overall_health, R.id.time_txt};
 
         // создаем адаптер и настраиваем список
-        scAdapter = new SimpleCursorAdapter(ativityContext, R.layout.entries_list_item, null, from, to, 0);
+        scAdapter = new SimpleCursorAdapter(activityContext, R.layout.entries_list_item, null, from, to, 0);
         lvData = (ListView) view.findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
 
@@ -103,7 +107,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(ativityContext, database);
+        return new MyCursorLoader(activityContext, database);
     }
 
     @Override
@@ -152,7 +156,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     public String loadPreferences(String key) {
         SharedPreferences appPref;
-        appPref = ativityContext.getSharedPreferences(
+        appPref = activityContext.getSharedPreferences(
                 MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
         switch (key) {
             case MainActivity.MEASUREMENT:

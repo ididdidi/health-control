@@ -31,12 +31,13 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         // Display date and  time on screen
         onCreateTimeView(savedInstanceState);
 
-        // chooses the fragment to display the current measurement
+            // chooses the fragment to display the current measurement
         if(savedInstanceState==null){
             Intent intent = getIntent();
             setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
         }
 
+        // Added RadioImage to indicate overall health
         onCreateRGOverallHealth(savedInstanceState);
     }
 
@@ -97,11 +98,12 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         timeTextView.setText(androidTime.format("%H:%M"));
     }
 
+    // Added RadioImage to indicate overall health
     private void onCreateRGOverallHealth(Bundle savedInstanceState){
         if (savedInstanceState == null) {
-            overallHealth = R.drawable.ic_sentiment_neutral_red;
+            overallHealth = R.drawable.ic_sentiment_neutral_grey;
         }else{
-            overallHealth = savedInstanceState.getInt(OVERALL_HEALTH, R.drawable.ic_sentiment_neutral_red);
+            overallHealth = savedInstanceState.getInt(OVERALL_HEALTH, R.drawable.ic_sentiment_neutral_grey);
         }
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rg_overallHealth);
 
@@ -114,16 +116,16 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
                         overallHealth = R.drawable.ic_sentiment_very_dissatisfied_red;
                         break;
                     case R.id.sentiment_dissatisfied:
-                        overallHealth = R.drawable.ic_sentiment_dissatisfied_red;
+                        overallHealth = R.drawable.ic_sentiment_dissatisfied_orange;
                         break;
                     case R.id.sentiment_neutral:
-                        overallHealth = R.drawable.ic_sentiment_neutral_red;
+                        overallHealth = R.drawable.ic_sentiment_neutral_grey;
                         break;
                     case R.id.sentiment_satisfied:
-                        overallHealth = R.drawable.ic_sentiment_satisfied_red;
+                        overallHealth = R.drawable.ic_sentiment_satisfied_green;
                         break;
                     case R.id.sentiment_very_satisfied:
-                        overallHealth = R.drawable.ic_sentiment_very_satisfied_red;
+                        overallHealth = R.drawable.ic_sentiment_very_satisfied_green_green;
                         break;
                 }
             }

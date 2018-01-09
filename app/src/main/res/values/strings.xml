@@ -15,7 +15,7 @@
     <string name="add_record">Добавить запись</string>
     <string name="delete_record">Удалить запись</string>
     <string name="date_time">Date time</string>
-    <string name="overall_health">Overall health</string>
+    <string name="overall_health">Overall\nhealth</string>
     <string name="value">Value</string>
 
 </resources>

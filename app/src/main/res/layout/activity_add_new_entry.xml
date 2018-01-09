@@ -28,7 +28,7 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="8dp"
                     android:layout_weight="1"
-                    android:text="data"
+                    android:text="date"
                     android:textAlignment="viewEnd"
                     android:textSize="24dp" />
 

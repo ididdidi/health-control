@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,9 +25,9 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences appPref;
     final static String APP_PREFERENCES = "app_preferences";
     final static String MEASUREMENT = "measurement";
-    final static String BLOOD_PRESSURE = "blood_pressure";
-    final static String GLUCOSE = "glucose";
-    final static String TEMPERATURE = "temperature";
+    final static String BLOOD_PRESSURE = "SIS / DIA  PUL";
+    final static String GLUCOSE = "Glucose";
+    final static String TEMPERATURE = "Temperature";
 
     private ViewPager viewPager;
 
@@ -149,6 +150,9 @@ public class MainActivity extends AppCompatActivity
         }
         // The message for the loader that the data has been changed
         this.getSupportLoaderManager().getLoader(0).forceLoad();
+
+        TextView viewMs = (TextView) findViewById(R.id.tv_measurement);
+        viewMs.setText(loadPreferences(MainActivity.MEASUREMENT));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
