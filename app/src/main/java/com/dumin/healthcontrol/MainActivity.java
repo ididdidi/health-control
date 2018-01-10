@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity
     final static String TEMPERATURE = "Temperature";
 
     private ViewPager viewPager;
+    ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity
         // Creates Tabs with pages
         onCreateTabLayout();
 
+        Toast.makeText(this, loadPreferences(MEASUREMENT), Toast.LENGTH_SHORT).show();
     }
 
     // Creates the Toolbar and NavigationView
@@ -89,7 +93,6 @@ public class MainActivity extends AppCompatActivity
     }
     // creates pages(fragments) and fills ViewPager
     private void setupViewPager(@NonNull ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(new EntriesList(), "Data");
         adapter.addFragment(new Graphics(), "Graphics");
@@ -149,6 +152,7 @@ public class MainActivity extends AppCompatActivity
         default: savePreferences(MEASUREMENT, BLOOD_PRESSURE);
         }
         // The message for the loader that the data has been changed
+        viewPager.setAdapter(adapter);
         this.getSupportLoaderManager().getLoader(0).forceLoad();
 
         TextView viewMs = (TextView) findViewById(R.id.tv_measurement);

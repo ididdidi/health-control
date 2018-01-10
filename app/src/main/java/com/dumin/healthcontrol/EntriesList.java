@@ -1,6 +1,5 @@
 package com.dumin.healthcontrol;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -10,19 +9,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -31,15 +25,15 @@ import java.util.concurrent.TimeUnit;
 
 public class EntriesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private Context activityContext;
     private static final int CM_DELETE_ID = 1;
     private static final String COLUMN_VALUE = "Value";
     private static final String COLUMN_OVERALL_HEALTH = "Overall_health";
     private static final String COLUMN_TIME = "Time";
 
-    ListView lvData;
-    Database database;
-    SimpleCursorAdapter scAdapter;
+    private Context activityContext;
+    private ListView lvData;
+    private Database database;
+    private SimpleCursorAdapter scAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,8 +56,8 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         viewMs.setText(loadPreferences(MainActivity.MEASUREMENT));
 
         // формируем столбцы сопоставления
-        String[] from = new String[] {COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME};
-        int[] to = new int[] { R.id.value_txt, R.id.overall_health, R.id.time_txt};
+        String[] from = new String[] {COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE};
+        int[] to = new int[] {R.id.time_txt, R.id.overall_health, R.id.value_txt};
 
         // создаем адаптер и настраиваем список
         scAdapter = new SimpleCursorAdapter(activityContext, R.layout.entries_list_item, null, from, to, 0);
@@ -120,10 +114,10 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
     }
 
 
-    static class MyCursorLoader extends CursorLoader {
+    static private class MyCursorLoader extends CursorLoader {
 
-        Context context;
-        Database db;
+        private Context context;
+        private Database db;
 
         public MyCursorLoader(Context context, Database db) {
             super(context);
@@ -138,16 +132,16 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
             appPref = context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
 
             switch (appPref.getString(MainActivity.MEASUREMENT, MainActivity.BLOOD_PRESSURE)) {
-                case MainActivity.APP_PREFERENCES:
-                    cursor = db.getBloodPressure(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                case MainActivity.BLOOD_PRESSURE:
+                    cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
                     break;
                 case MainActivity.GLUCOSE:
-                    cursor = db.getGlucose(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                    cursor = db.getGlucose(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
                     break;
                 case MainActivity.TEMPERATURE:
-                    cursor = db.getTemperature(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                    cursor = db.getTemperature(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
                     break;
-                default: cursor = db.getBloodPressure(COLUMN_VALUE, COLUMN_OVERALL_HEALTH, COLUMN_TIME);
+                default: cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
             }
             return cursor;
         }

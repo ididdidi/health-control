@@ -67,12 +67,6 @@ public class Database {
                     COLUMN_TIME + " real" +
                     ");";
 
-    // The same requests for multiple tables from the database
-    private final String requestHealth = COLUMN_HEALTH + " as ";
-
-    private final String requestTime = "strftime('%d.%m.%Y \n %H:%M', datetime(" + COLUMN_TIME +
-            ", 'unixepoch', 'localtime')) as ";
-
     // constructor
     public Database(@NonNull Context ctx) {
         mCtx = ctx;
@@ -89,46 +83,48 @@ public class Database {
         if (mDBHelper!=null) mDBHelper.close();
     }
 
+    // The same requests for multiple tables from the database
+    private String[] formQuery(@NonNull String[] getColumns){
+        String[] columns = {
+                COLUMN_ID,
+                "strftime('%d.%m.%Y \n %H:%M', datetime(" + COLUMN_TIME +
+                        ", 'unixepoch', 'localtime')) as " + getColumns[0],
+                COLUMN_HEALTH + " as " + getColumns[1],
+                getColumns[2]};
+        String[] copyColumns = new String[4];
+        System.arraycopy (columns, 0, copyColumns, 0, 4);
+        return copyColumns;
+    }
+
     // To retrieve data from a table of blood pressure
-    public Cursor getBloodPressure(@NonNull String columnValues, @NonNull String columnHealth,
-                                   @NonNull String columnTime) {
+    public Cursor getBloodPressure(@NonNull String columnTime, @NonNull String columnHealth,
+                                   @NonNull String columnValues) {
 
         String requestValues =  COLUMN_SYSTOLIC_PRESSURE + " || '/' || " + COLUMN_DIASTOLIC_PRESSURE +
                 " || ' ' || " + COLUMN_PULSE + " as " + columnValues;
 
-        String[] columns  = {
-                COLUMN_ID ,
-                requestValues,
-                requestHealth + columnHealth,
-                requestTime + columnTime
-        };
+        String[] getColumns = {columnTime, columnHealth, requestValues};
+        String[] columns = formQuery(getColumns);
 
         return mDB.query(BP_TABLE, columns, null, null, null, null, null);
     }
     // To retrieve data from a table of glucose
-    public Cursor getGlucose(@NonNull String columnValues, @NonNull String columnHealth,
-                             @NonNull String columnTime) {
+    public Cursor getGlucose(@NonNull String columnTime, @NonNull String columnHealth,
+                             @NonNull String columnValues) {
         String requestValues = "round(" + COLUMN_GLUCOSE_LEVELS + ", 1)" + " as "+ columnValues;
 
-        String[] columns  = {
-                COLUMN_ID ,
-                requestValues,
-                requestHealth + columnHealth,
-                requestTime + columnTime
-        };
+        String[] getColumns = {columnTime, columnHealth, requestValues};
+        String[] columns = formQuery(getColumns);
+
         return mDB.query(GLC_TABLE, columns, null, null, null, null, null);
     }
     // To retrieve data from a table of temperature
-    public Cursor getTemperature(@NonNull String columnValues, @NonNull String columnHealth,
-                                 @NonNull String columnTime) {
+    public Cursor getTemperature(@NonNull String columnTime, @NonNull String columnHealth,
+                                 @NonNull String columnValues) {
         String requestValues = "round(" + COLUMN_BODY_TEMPERATURE + ", 1)" + " as "+ columnValues;
 
-        String[] columns  = {
-                COLUMN_ID ,
-                requestValues,
-                requestHealth + columnHealth,
-                requestTime + columnTime
-        };
+        String[] getColumns = {columnTime, columnHealth, requestValues};
+        String[] columns = formQuery(getColumns);
 
         return mDB.query(TMPR_TABLE, columns, null, null, null, null, null);
     }
