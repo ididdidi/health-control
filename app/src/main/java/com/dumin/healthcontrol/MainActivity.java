@@ -23,12 +23,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SharedPreferences appPref;
-    final static String APP_PREFERENCES = "app_preferences";
-    final static String MEASUREMENT = "measurement";
-    final static String BLOOD_PRESSURE = "SIS / DIA  PUL";
-    final static String GLUCOSE = "Glucose";
-    final static String TEMPERATURE = "Temperature";
+    private SPrefManager appPref;
 
     private ViewPager viewPager;
     ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -39,6 +34,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        appPref = new SPrefManager(this);
+
         // Creates the Toolbar and NavigationView
         onCreateNavigationView();
 
@@ -48,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         // Creates Tabs with pages
         onCreateTabLayout();
 
-        Toast.makeText(this, loadPreferences(MEASUREMENT), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, appPref.loadPreferences(appPref.MEASUREMENT), Toast.LENGTH_SHORT).show();
     }
 
     // Creates the Toolbar and NavigationView
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddNewEntry.class);
-                intent.putExtra(APP_PREFERENCES, loadPreferences(MEASUREMENT));
+                intent.putExtra(appPref.APP_PREFERENCES, appPref.loadPreferences(appPref.MEASUREMENT));
                 startActivityForResult(intent, 1);
             }
         });
@@ -138,25 +135,24 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         switch(item.getItemId()){
             case R.id.blood_pressure: {
-                savePreferences(MEASUREMENT, BLOOD_PRESSURE);
+                appPref.savePreferences(appPref.MEASUREMENT, appPref.BLOOD_PRESSURE);
                 break;
             }
             case R.id.glucose: {
-                savePreferences(MEASUREMENT, GLUCOSE);
+                appPref.savePreferences(appPref.MEASUREMENT, appPref.GLUCOSE);
                 break;
             }
             case R.id.temperature: {
-                savePreferences(MEASUREMENT, TEMPERATURE);
+                appPref.savePreferences(appPref.MEASUREMENT, appPref.TEMPERATURE);
                 break;
             }
-        default: savePreferences(MEASUREMENT, BLOOD_PRESSURE);
+        default: appPref.savePreferences(appPref.MEASUREMENT, appPref.BLOOD_PRESSURE);
         }
         // The message for the loader that the data has been changed
-        viewPager.setAdapter(adapter);
         this.getSupportLoaderManager().getLoader(0).forceLoad();
 
         TextView viewMs = (TextView) findViewById(R.id.tv_measurement);
-        viewMs.setText(loadPreferences(MainActivity.MEASUREMENT));
+        viewMs.setText(appPref.loadPreferences(appPref.MEASUREMENT));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -169,29 +165,6 @@ public class MainActivity extends AppCompatActivity
         if(data == null) {return;}
         if(data.getBooleanExtra("update",false)){
             this.getSupportLoaderManager().getLoader(0).forceLoad();
-        }
-    }
-
-    //Allows you to make settings app
-    private void savePreferences(@NonNull String key, @NonNull String value) {
-        appPref = this.getSharedPreferences(
-                APP_PREFERENCES, MODE_PRIVATE);
-        SharedPreferences.Editor editor = appPref.edit();
-        editor.putString(key, value);
-        editor.apply();
-        Log.wtf(getClass().getName(), loadPreferences(MEASUREMENT));
-    }
-
-    //Reads the application settings
-    private String loadPreferences(@NonNull String key) {
-        appPref = this.getSharedPreferences(
-                APP_PREFERENCES, MODE_PRIVATE);
-        switch (key) {
-            case MEASUREMENT:
-                return appPref.getString(key,
-                        BLOOD_PRESSURE);
-            default:
-                return "LoadPreferences no correct";
         }
     }
 

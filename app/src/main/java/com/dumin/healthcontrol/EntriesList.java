@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
@@ -26,20 +25,18 @@ import android.widget.TextView;
 public class EntriesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CM_DELETE_ID = 1;
-    private static final String COLUMN_VALUE = "Value";
-    private static final String COLUMN_OVERALL_HEALTH = "Overall_health";
-    private static final String COLUMN_TIME = "Time";
 
     private Context activityContext;
     private ListView lvData;
     private Database database;
     private SimpleCursorAdapter scAdapter;
+    private SPrefManager appPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityContext = getActivity();
-
+        appPref = new SPrefManager(activityContext);
         // open the DB connection
         database = new Database(activityContext);
         database.open();
@@ -53,24 +50,28 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         View view = inflater.inflate(R.layout.entries_list, container, false);
 
         TextView viewMs = (TextView) view.findViewById(R.id.tv_measurement);
-        viewMs.setText(loadPreferences(MainActivity.MEASUREMENT));
+        viewMs.setText(appPref.loadPreferences(SPrefManager.MEASUREMENT));
 
-        // формируем столбцы сопоставления
-        String[] from = new String[] {COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE};
+        onCreateAdapter(view);
+
+        return view;
+    }
+
+    private void onCreateAdapter(View view){
+        // generated columns mapping
+        String[] from = new String[] {DBLoader.COLUMN_TIME, DBLoader.COLUMN_OVERALL_HEALTH, DBLoader.COLUMN_VALUE};
         int[] to = new int[] {R.id.time_txt, R.id.overall_health, R.id.value_txt};
 
-        // создаем адаптер и настраиваем список
+        // create adapter and custom list
         scAdapter = new SimpleCursorAdapter(activityContext, R.layout.entries_list_item, null, from, to, 0);
         lvData = (ListView) view.findViewById(R.id.lvData);
         lvData.setAdapter(scAdapter);
 
-        // добавляем контекстное меню к списку
+        // added context menu to the list
         registerForContextMenu(lvData);
 
-        // создаем лоадер для чтения данных
+        // create a loader to read data
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
-
-        return view;
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -85,7 +86,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                     .getMenuInfo();
             // извлекаем id записи и удаляем соответствующую запись в БД
-            database.delRec(loadPreferences(MainActivity.MEASUREMENT), acmi.id);
+            database.delRec(appPref.loadPreferences(SPrefManager.MEASUREMENT), acmi.id);
             // получаем новый курсор с данными
             getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
@@ -95,13 +96,13 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     public void onDestroy() {
         super.onDestroy();
-        // закрываем подключение при выходе
+        // close the connection when exiting
         database.close();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(activityContext, database);
+        return new DBLoader(activityContext, database);
     }
 
     @Override
@@ -111,55 +112,6 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-
-    static private class MyCursorLoader extends CursorLoader {
-
-        private Context context;
-        private Database db;
-
-        public MyCursorLoader(Context context, Database db) {
-            super(context);
-            this.db = db;
-            this.context = context;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            Cursor cursor;
-            SharedPreferences appPref;
-            appPref = context.getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
-
-            switch (appPref.getString(MainActivity.MEASUREMENT, MainActivity.BLOOD_PRESSURE)) {
-                case MainActivity.BLOOD_PRESSURE:
-                    cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                case MainActivity.GLUCOSE:
-                    cursor = db.getGlucose(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                case MainActivity.TEMPERATURE:
-                    cursor = db.getTemperature(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                default: cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-            }
-            return cursor;
-        }
-
-    }
-
-    public String loadPreferences(String key) {
-        SharedPreferences appPref;
-        appPref = activityContext.getSharedPreferences(
-                MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
-        switch (key) {
-            case MainActivity.MEASUREMENT:
-                return appPref.getString(key,
-                        MainActivity.BLOOD_PRESSURE);
-            default:
-                return "LoadPreferences no correct";
-        }
-
     }
 
 }

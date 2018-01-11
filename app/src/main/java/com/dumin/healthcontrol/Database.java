@@ -162,13 +162,13 @@ public class Database {
     // to delete a record from the database
     public void delRec(@NonNull String measurement, long id) {
         switch (measurement) {
-            case MainActivity.BLOOD_PRESSURE:
+            case SPrefManager.BLOOD_PRESSURE:
                 mDB.delete(BP_TABLE, COLUMN_ID + " = " + id, null);
                 break;
-            case MainActivity.GLUCOSE:
+            case SPrefManager.GLUCOSE:
                 mDB.delete(GLC_TABLE, COLUMN_ID + " = " + id, null);
                 break;
-            case MainActivity.TEMPERATURE:
+            case SPrefManager.TEMPERATURE:
                 mDB.delete(TMPR_TABLE, COLUMN_ID + " = " + id, null);
                 break;
             default:

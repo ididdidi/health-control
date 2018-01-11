@@ -34,7 +34,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
             // chooses the fragment to display the current measurement
         if(savedInstanceState==null){
             Intent intent = getIntent();
-            setupAddEntryFragment(intent.getStringExtra(MainActivity.APP_PREFERENCES));
+            setupAddEntryFragment(intent.getStringExtra(SPrefManager.APP_PREFERENCES));
         }
 
         // Added RadioImage to indicate overall health
@@ -53,17 +53,17 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
 
         switch (measurement) {
-            case MainActivity.BLOOD_PRESSURE: {
+            case SPrefManager.BLOOD_PRESSURE: {
                 AddBloodPressureEntry addBloodPressureEntry = new AddBloodPressureEntry();
                 frTransaction.add(R.id.fragment, addBloodPressureEntry);
                 break;
             }
-            case MainActivity.GLUCOSE: {
+            case SPrefManager.GLUCOSE: {
                 AddGlucoseEntry addGlucoseEntry = new AddGlucoseEntry();
                 frTransaction.add(R.id.fragment, addGlucoseEntry);
                 break;
             }
-            case MainActivity.TEMPERATURE: {
+            case SPrefManager.TEMPERATURE: {
                 AddTemperatureEntry addTemperatureEntry = new AddTemperatureEntry();
                 frTransaction.add(R.id.fragment, addTemperatureEntry);
                 break;

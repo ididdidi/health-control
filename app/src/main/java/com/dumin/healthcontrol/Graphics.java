@@ -1,13 +1,17 @@
 package com.dumin.healthcontrol;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +21,22 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
  * Displays graphs in TabLayout
  */
 
-public class Graphics extends Fragment {
+public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private Context activityContext;
     private Database database;
-    private SimpleCursorAdapter scAdapter;
+    GraphView graph;
+    Pencil pencil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,33 +51,49 @@ public class Graphics extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        SharedPreferences sp = activityContext.getSharedPreferences(MainActivity.APP_PREFERENCES,
-                Context.MODE_PRIVATE);
 
         View v = inflater.inflate(R.layout.graphics, container, false);
 
-        GraphView graph = (GraphView) v.findViewById(R.id.graph);
-        Pencil pencil = new Pencil(activityContext, database);
-
-        pencil.draw(sp.getString(MainActivity.MEASUREMENT, MainActivity.BLOOD_PRESSURE), graph);
-
+        graph = (GraphView) v.findViewById(R.id.graph);
+        pencil = new Pencil(activityContext);
+        getActivity().getSupportLoaderManager().initLoader(1, null, this);
+//        pencil.draw(MainActivity.BLOOD_PRESSURE, graph, getActivity().getSupportLoaderManager().);
         return v;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new DBLoader(activityContext, database);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // закрываем подключение при выходе
+        database.close();
     }
 
     private class Pencil {
 
         private static final String COLUMN_VALUE = "Value";
-        private static final String COLUMN_OVERALL_HEALTH = "Overall_health";
         private static final String COLUMN_TIME = "Time";
         private Context context;
-        private Database db;
 
-        public Pencil(@NonNull Context context, @NonNull Database db) {
-            this.db = db;
+        private Pencil(@NonNull Context context) {
             this.context = context;
         }
 
-        public void draw(@NonNull String measurement, GraphView graph){
+        private void draw(@NonNull String measurement, GraphView graph, Cursor cursor){
 
 //            // activate horizontal zooming and scrolling
 //            graph.getViewport().setScalable(true);
@@ -96,7 +117,6 @@ public class Graphics extends Fragment {
             double value;
             int [] tmpArr;
 
-            Cursor cursor = getCursor(measurement);
             if(cursor!=null&&cursor.moveToFirst()){
                 do{
                     tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_TIME)));
@@ -105,7 +125,7 @@ public class Graphics extends Fragment {
 
                     tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_VALUE)));
                     series0.appendData(new DataPoint(date, tmpArr[0]),true,42);
-                    if(measurement.equals(MainActivity.BLOOD_PRESSURE)){
+                    if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
                         series1.appendData(new DataPoint(date, tmpArr[1]),true,42);
                         series2.appendData(new DataPoint(date, tmpArr[2]),true,42);
                     }
@@ -114,15 +134,17 @@ public class Graphics extends Fragment {
             }
 
             graph.addSeries(series0);
-            if(measurement.equals(MainActivity.BLOOD_PRESSURE)){
+            if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
                 graph.addSeries(series1);
                 graph.addSeries(series2);
             }
 
 
             // set date label formatter
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+            @SuppressLint("SimpleDateFormat")
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm\ndd.MM.yy");
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(context, dateFormat));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
 
 //// set manual x bounds to have nice steps
 //            graph.getViewport().setMinX(date.getTime());
@@ -134,23 +156,6 @@ public class Graphics extends Fragment {
             graph.getGridLabelRenderer().setHumanRounding(false);
 
 
-        }
-        public Cursor getCursor(@NonNull String measurement) {
-            Cursor cursor;
-
-            switch (measurement) {
-                case MainActivity.BLOOD_PRESSURE:
-                    cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                case MainActivity.GLUCOSE:
-                    cursor = db.getGlucose(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                case MainActivity.TEMPERATURE:
-                    cursor = db.getTemperature(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-                    break;
-                default: cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
-            }
-            return cursor;
         }
 
         private int[] parseStr(String str){
@@ -166,5 +171,6 @@ public class Graphics extends Fragment {
         }
 
     }
+
     final String LOG_TAG = "myLogs";
 }
