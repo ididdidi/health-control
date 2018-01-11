@@ -7,11 +7,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.Time;
-import android.view.Display;
 import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
