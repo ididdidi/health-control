@@ -1,7 +1,6 @@
 package com.dumin.healthcontrol;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

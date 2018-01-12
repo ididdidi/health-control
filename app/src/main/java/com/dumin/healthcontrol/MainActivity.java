@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity
         }
         // The message for the loader that the data has been changed
         this.getSupportLoaderManager().getLoader(0).forceLoad();
+        this.getSupportLoaderManager().getLoader(1).forceLoad();
 
         TextView viewMs = (TextView) findViewById(R.id.tv_measurement);
         viewMs.setText(appPref.loadPreferences(appPref.MEASUREMENT));
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity
         if(data == null) {return;}
         if(data.getBooleanExtra("update",false)){
             this.getSupportLoaderManager().getLoader(0).forceLoad();
+            this.getSupportLoaderManager().getLoader(1).forceLoad();
         }
     }
 

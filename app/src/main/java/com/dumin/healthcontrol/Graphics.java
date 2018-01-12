@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     private Context activityContext;
     private Database database;
-    private SimpleCursorAdapter scAdapter;
     GraphView graph;
     Pencil pencil;
 
@@ -58,7 +58,6 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         graph = (GraphView) v.findViewById(R.id.graph);
         pencil = new Pencil(activityContext);
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
-//        pencil.draw(SPrefManager.BLOOD_PRESSURE, graph, getActivity().getSupportLoaderManager().);
         return v;
     }
 
@@ -69,7 +68,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        Log.d(LOG_TAG,"onLoadFinished Graphics" );
     }
 
     @Override

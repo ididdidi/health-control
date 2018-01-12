@@ -44,5 +44,4 @@ public class DBLoader extends CursorLoader {
         }
         return cursor;
     }
-
 }
