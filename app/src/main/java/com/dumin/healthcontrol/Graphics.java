@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,11 +22,14 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 
 /**
@@ -34,10 +38,16 @@ import java.util.GregorianCalendar;
 
 public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String COLUMN_VALUE = "Value";
+    private static final String COLUMN_TIME = "Time";
+    private final int NUMB_GRAPH= 3;
+
     private Context activityContext;
     private Database database;
+    private  DBLoader dbLoader;
     GraphView graph;
-    Pencil pencil;
+    private ArrayList<LineGraphSeries<DataPoint>> series;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +57,8 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         // open the DB connection
         database = new Database(activityContext);
         database.open();
+        series = new ArrayList(NUMB_GRAPH);
+        series.trimToSize();
     }
 
     @Override
@@ -56,18 +68,22 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         View v = inflater.inflate(R.layout.graphics, container, false);
 
         graph = (GraphView) v.findViewById(R.id.graph);
-        pencil = new Pencil(activityContext);
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
+
+        onDraw(graph,series);
+        Log.d(LOG_TAG,"onLoadFinished Graphics " + series.size());
         return v;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new DBLoader(activityContext, database);
+        dbLoader = new DBLoader(activityContext, database);
+        return dbLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        onDraw(graph,series);
         Log.d(LOG_TAG,"onLoadFinished Graphics" );
     }
 
@@ -83,68 +99,24 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         database.close();
     }
 
-    private class Pencil {
+    private void onDraw(GraphView graph, ArrayList<LineGraphSeries<DataPoint>> series){
 
-        private static final String COLUMN_VALUE = "Value";
-        private static final String COLUMN_TIME = "Time";
-        private Context context;
+        int color[] = {Color.RED, Color.CYAN, Color.GREEN};
 
-        private Pencil(@NonNull Context context) {
-            this.context = context;
-        }
+        SPrefManager appPref = new SPrefManager(activityContext);
+        String measurement = appPref.loadPreferences(SPrefManager.MEASUREMENT);
+        graph.removeAllSeries();
+        graph.onDataChanged(true, true);
+        graph.setTitle(measurement);
+        graph.setTitleTextSize(36);
+        graph.setTitleColor(Color.GRAY);
 
-        private void draw(@NonNull String measurement, GraphView graph, Cursor cursor){
-
-//            // activate horizontal zooming and scrolling
-//            graph.getViewport().setScalable(true);
-//
-//            // activate horizontal scrolling
-//            graph.getViewport().setScrollable(true);
-//
-//            // activate horizontal and vertical zooming and scrolling
-//            graph.getViewport().setScalableY(true);
-//
-//            // activate vertical scrolling
-//            graph.getViewport().setScrollableY(true);
-
-
-            LineGraphSeries<DataPoint> series0 = new LineGraphSeries<>();
-            LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>();
-            LineGraphSeries<DataPoint> series2 = new LineGraphSeries<>();
-
-            GregorianCalendar calendar = new GregorianCalendar();;
-            Date date;
-            double value;
-            int [] tmpArr;
-
-            if(cursor!=null&&cursor.moveToFirst()){
-                do{
-                    tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_TIME)));
-                    calendar.set(tmpArr[2],tmpArr[1]-1,tmpArr[0],tmpArr[3],tmpArr[4]);
-                    date = calendar.getTime();
-
-                    tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_VALUE)));
-                    series0.appendData(new DataPoint(date, tmpArr[0]),true,42);
-                    if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
-                        series1.appendData(new DataPoint(date, tmpArr[1]),true,42);
-                        series2.appendData(new DataPoint(date, tmpArr[2]),true,42);
-                    }
-                    //Log.d(LOG_TAG,"cursor.moveToFirst " + date.toString() + " " + value);
-                }while(cursor.moveToNext());
-            }
-
-            graph.addSeries(series0);
-            if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
-                graph.addSeries(series1);
-                graph.addSeries(series2);
-            }
-
-
-            // set date label formatter
-            @SuppressLint("SimpleDateFormat")
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm\ndd.MM.yy");
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(context, dateFormat));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+        // set date label formatter
+        @SuppressLint("SimpleDateFormat")
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm\ndd.MM.yy");
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(activityContext, dateFormat));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+        graph.getGridLabelRenderer().setNumVerticalLabels(5); // only 4 because of the space
 
 //// set manual x bounds to have nice steps
 //            graph.getViewport().setMinX(date.getTime());
@@ -153,23 +125,66 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
 // as we use dates as labels, the human rounding to nice readable numbers
 // is not necessary
-            graph.getGridLabelRenderer().setHumanRounding(false);
+        graph.getGridLabelRenderer().setHumanRounding(false);
 
 
+        Cursor cursor = dbLoader.loadInBackground();
+
+        ArrayList <DataPoint[]> values = new ArrayList<>();
+
+        int count = 0;
+        do{
+            values.add(new DataPoint[cursor.getCount()]);
+        }while (++count < NUMB_GRAPH && measurement.equals(SPrefManager.BLOOD_PRESSURE));
+        
+        GregorianCalendar calendar = new GregorianCalendar();
+        Date date;
+        int [] tmpArr;
+
+        if(cursor!=null&&cursor.moveToFirst()){
+        count = 0;
+            do{
+                tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_TIME)));
+                calendar.set(tmpArr[2],tmpArr[1]-1,tmpArr[0],tmpArr[3],tmpArr[4]);
+                date = calendar.getTime();
+
+                if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
+                    tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_VALUE)));
+                    for (int i=0; i<values.size(); i++) {
+                        values.get(i)[count] = new DataPoint(date, tmpArr[i]);
+                    }
+                } else {
+                        values.get(0)[count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_VALUE)));
+                }
+                count++;
+
+            }while(cursor.moveToNext());
         }
 
-        private int[] parseStr(String str){
-            str = str.replaceAll("[^0-9]+", " ");
-            String strArr[] = str.split(" ");
-            int numArr[] = new int[strArr.length];
-            for (int i = 0; i < strArr.length; i++) {
-                numArr[i] = Integer.parseInt(strArr[i]);
+        count = 0;
+        do{
+            if(series.size()<count+1){
+                series.add(new LineGraphSeries<>(values.get(count)));
+            }else {
+                series.get(count).resetData(values.get(count));
             }
-            int ret[] = new int [strArr.length];
-            System.arraycopy(numArr,0,ret,0,strArr.length);
-            return ret;
-        }
+            series.get(count).setColor(color[count]);
+            series.get(count).setThickness(3);
+            graph.addSeries(series.get(count));
+        }while (++count < values.size() && measurement.equals(SPrefManager.BLOOD_PRESSURE));
 
+    }
+
+    private int[] parseStr(String str){
+        str = str.replaceAll("[^0-9]+", " ");
+        String strArr[] = str.split(" ");
+        int numArr[] = new int[strArr.length];
+        for (int i = 0; i < strArr.length; i++) {
+            numArr[i] = Integer.parseInt(strArr[i]);
+        }
+        int ret[] = new int [strArr.length];
+        System.arraycopy(numArr,0,ret,0,strArr.length);
+        return ret;
     }
 
     final String LOG_TAG = "myLogs";
