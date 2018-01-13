@@ -11,11 +11,14 @@ import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
 
     private final String TIME = "time";
     private final String OVERALL_HEALTH = "overallHealth";
-    private long timeInSeconds;
+    private long timeInMillis;
     private int overallHealth;
 
     @Override
@@ -71,23 +74,25 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     }
 
     // To set the current time or taken from Bundle
-    private void setKnownTime(Bundle savedInstanceState, @NonNull Time androidTime) {
+    private void setKnownTime(Bundle savedInstanceState, @NonNull Calendar calendar) {
         if (savedInstanceState == null) {
-            timeInSeconds = androidTime.toMillis(true)/1000;
+            timeInMillis = calendar.getTimeInMillis();
         } else {
-            timeInSeconds = savedInstanceState.getLong(TIME, androidTime.toMillis(false));
-            androidTime.set(timeInSeconds * 1000);
+            timeInMillis = savedInstanceState.getLong(TIME, calendar.getTimeInMillis());
+            calendar.setTimeInMillis(timeInMillis);
         }
     }
 
     // Display date and  time on screen
     private void onCreateTimeView(Bundle savedInstanceState){
 
+        Calendar calendar = new GregorianCalendar();
+
         Time androidTime = new Time(Time.getCurrentTimezone());
         androidTime.setToNow();
 
         // To set the current time or taken from Bundle
-        setKnownTime(savedInstanceState, androidTime);
+        setKnownTime(savedInstanceState, calendar);
 
         TextView dateTextView = (TextView) findViewById(R.id.date);
         dateTextView.setText(androidTime.format("%d.%m.%Y"));
@@ -134,7 +139,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(TIME, timeInSeconds);
+        outState.putLong(TIME, timeInMillis);
         outState.putInt(OVERALL_HEALTH, overallHealth);
     }
 
@@ -159,7 +164,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     // Stealing time from the Activity
     @Override
     public long getTimeInSeconds(){
-        return timeInSeconds;
+        return timeInMillis / 1000;
     }
     @Override
     public int getOverallHealth(){

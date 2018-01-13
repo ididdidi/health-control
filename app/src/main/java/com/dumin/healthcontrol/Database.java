@@ -48,7 +48,7 @@ public class Database {
                     COLUMN_DIASTOLIC_PRESSURE + " integer, " +
                     COLUMN_PULSE + " integer, " +
                     COLUMN_HEALTH + " integer, " +
-                    COLUMN_TIME + " real" +
+                    COLUMN_TIME + " int" +
                     ");";
     // Glucose
     private static final String DB_CREATE_GLC_TABLE =
@@ -56,7 +56,7 @@ public class Database {
                     COLUMN_ID + " integer primary key autoincrement, " +
                     COLUMN_GLUCOSE_LEVELS + " real, " +
                     COLUMN_HEALTH + " integer, " +
-                    COLUMN_TIME + " real" +
+                    COLUMN_TIME + " int" +
                     ");";
     // Temperature
     private static final String DB_CREATE_TMPR_TABLE =
@@ -64,7 +64,7 @@ public class Database {
                     COLUMN_ID + " integer primary key autoincrement, " +
                     COLUMN_BODY_TEMPERATURE + " real, " +
                     COLUMN_HEALTH + " integer, " +
-                    COLUMN_TIME + " real" +
+                    COLUMN_TIME + " int" +
                     ");";
 
     // constructor
@@ -130,7 +130,7 @@ public class Database {
     }
 
     // to add a record to a table of blood pressure
-    public void addBloodPressure(double time, int overallHealth, int systolicPressure,
+    public void addBloodPressure(long time, int overallHealth, int systolicPressure,
                                  int diastolicPressure, int pulse) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_SYSTOLIC_PRESSURE, systolicPressure);
@@ -142,7 +142,7 @@ public class Database {
     }
 
     // to add a record to a table of glucose
-    public void addGlucose(double time, int overallHealth, double glucose) {
+    public void addGlucose(long time, int overallHealth, double glucose) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_GLUCOSE_LEVELS, glucose);
         cv.put(COLUMN_HEALTH, overallHealth);
@@ -151,7 +151,7 @@ public class Database {
     }
 
     // to add a record to a table of temperature
-    public void addTemperature(double time, int overallHealth, double temperature) {
+    public void addTemperature(long time, int overallHealth, double temperature) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_BODY_TEMPERATURE, temperature);
         cv.put(COLUMN_HEALTH, overallHealth);

@@ -88,6 +88,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
             database.delRec(appPref.loadPreferences(SPrefManager.MEASUREMENT), acmi.id);
             // получаем новый курсор с данными
             getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
+            getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
             return true;
         }
         return super.onContextItemSelected(item);

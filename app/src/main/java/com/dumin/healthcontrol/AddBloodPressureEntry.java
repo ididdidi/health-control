@@ -65,8 +65,8 @@ public class AddBloodPressureEntry extends Fragment {
         numberPicker1.setValue(diastolic_pressure);
 
         numberPicker2 = (NumberPicker) v.findViewById(R.id.np_pulse);
-        numberPicker2.setMaxValue(500);
-        numberPicker2.setMinValue(40);
+        numberPicker2.setMaxValue(250);
+        numberPicker2.setMinValue(30);
         numberPicker2.setValue(pulse);
 
         return v;
