@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -68,6 +69,8 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         View v = inflater.inflate(R.layout.graphics, container, false);
 
         graph = (GraphView) v.findViewById(R.id.graph);
+
+        // create a loader to read data
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
 
         onDraw(graph,series);
@@ -106,27 +109,11 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         SPrefManager appPref = new SPrefManager(activityContext);
         String measurement = appPref.loadPreferences(SPrefManager.MEASUREMENT);
         graph.removeAllSeries();
-        graph.onDataChanged(true, true);
-        graph.setTitle(measurement);
-        graph.setTitleTextSize(36);
-        graph.setTitleColor(Color.GRAY);
 
-        // set date label formatter
-        @SuppressLint("SimpleDateFormat")
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm\ndd.MM.yy");
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(activityContext, dateFormat));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(5); // only 4 because of the space
-
-//// set manual x bounds to have nice steps
-//            graph.getViewport().setMinX(date.getTime());
-//            graph.getViewport().setMaxX(date.getTime());
-//            graph.getViewport().setXAxisBoundsManual(true);
+//        graph.getViewport().scrollToEnd();
 
 // as we use dates as labels, the human rounding to nice readable numbers
 // is not necessary
-        graph.getGridLabelRenderer().setHumanRounding(false);
-
 
         Cursor cursor = dbLoader.loadInBackground();
 
@@ -139,6 +126,10 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         
         GregorianCalendar calendar = new GregorianCalendar();
         Date date;
+        Date dateMin = null;
+        Date dateMax = null;
+        int valueMin = 999;
+        int valueMax = 0;
         int [] tmpArr;
 
         if(cursor!=null&&cursor.moveToFirst()){
@@ -147,14 +138,20 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
                 tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_TIME)));
                 calendar.set(tmpArr[2],tmpArr[1]-1,tmpArr[0],tmpArr[3],tmpArr[4]);
                 date = calendar.getTime();
+                if(dateMin==null || date.before(dateMin)){ dateMin = date; }
+                if(dateMax==null || date.after(dateMax)){ dateMax = date;}
 
+                tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_VALUE)));
                 if(measurement.equals(SPrefManager.BLOOD_PRESSURE)){
-                    tmpArr = parseStr( cursor.getString(cursor.getColumnIndexOrThrow (COLUMN_VALUE)));
                     for (int i=0; i<values.size(); i++) {
                         values.get(i)[count] = new DataPoint(date, tmpArr[i]);
+                        if(valueMin > tmpArr[i]){ valueMin = tmpArr[i]; }
+                        if(valueMax < tmpArr[i]){ valueMax = tmpArr[i]; }
                     }
                 } else {
-                        values.get(0)[count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_VALUE)));
+                    values.get(0)[count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_VALUE)));
+                    if(valueMin > tmpArr[0]){ valueMin = tmpArr[0]; }
+                    if(valueMax < tmpArr[0]){ valueMax = tmpArr[0]; }
                 }
                 count++;
 
@@ -173,6 +170,30 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
             graph.addSeries(series.get(count));
         }while (++count < values.size() && measurement.equals(SPrefManager.BLOOD_PRESSURE));
 
+        graph.setTitle(measurement);
+        graph.setTitleTextSize(36);
+        graph.setTitleColor(Color.GRAY);
+
+     //   graph.onDataChanged(true, true);
+
+        graph.getViewport().setMinX(dateMin.getTime() - 3600000);
+        graph.getViewport().setMaxX(dateMax.getTime() + 3600000);
+
+        double  deltaY = ( valueMax - valueMin ) * 0.02;
+        graph.getViewport().setMinY(valueMin - deltaY);
+        graph.getViewport().setMaxY(valueMax + deltaY);
+
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        //        // set date label formatter
+        @SuppressLint("SimpleDateFormat")
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm\ndd.MM");
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(activityContext, dateFormat));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 5 because of the space
+        graph.getGridLabelRenderer().setNumVerticalLabels(10);
+
+        Log.d(LOG_TAG,"onLoadFinished Graphics valueMin " + valueMin);
+        Log.d(LOG_TAG,"onLoadFinished Graphics valueMax " + valueMax);
     }
 
     private int[] parseStr(String str){
