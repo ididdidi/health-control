@@ -101,6 +101,7 @@ public class GraphViewManager {
         // Fill the arrays with the points on the graph and find the extreme values
         if (cursor != null && cursor.moveToFirst()) {
             count = 0;
+            int index = cursor.getCount() - 1;  // Because is sorted by DESC!!!
             do {
                 // Fill in the coordinates of X date and time
                 tmpArr = parseStr(cursor.getString(cursor.getColumnIndexOrThrow(DBLoader.COLUMN_TIME)));
@@ -118,12 +119,12 @@ public class GraphViewManager {
                 // If the desired value with three parameters(blood pressure)
                 if (measurement.equals(SPrefManager.BLOOD_PRESSURE)) {
                     for (int i = 0; i < values.size(); i++) {
-                        values.get(i)[count] = new DataPoint(date, tmpArr[i]);
+                        values.get(i)[index-count] = new DataPoint(date, tmpArr[i]);
                         if (valueMin > tmpArr[i]) { valueMin = tmpArr[i]; }
                         if (valueMax < tmpArr[i]) { valueMax = tmpArr[i]; }
                     }
                 } else { // If the desired value with one of parameters
-                    values.get(0)[count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(DBLoader.COLUMN_VALUE)));
+                    values.get(0)[index-count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(DBLoader.COLUMN_VALUE)));
                     if (valueMin > tmpArr[0]) { valueMin = tmpArr[0]; }
                     if (valueMax < tmpArr[0]) { valueMax = tmpArr[0]; }
                 }

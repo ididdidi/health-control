@@ -67,6 +67,8 @@ public class Database {
                     COLUMN_TIME + " int" +
                     ");";
 
+    private static  final  String ORDER = COLUMN_TIME + " DESC";
+
     // constructor
     public Database(@NonNull Context ctx) {
         mCtx = ctx;
@@ -106,7 +108,7 @@ public class Database {
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(BP_TABLE, columns, null, null, null, null, null);
+        return mDB.query(BP_TABLE, columns, null, null, null, null, ORDER);
     }
     // To retrieve data from a table of glucose
     public Cursor getGlucose(@NonNull String columnTime, @NonNull String columnHealth,
@@ -116,7 +118,7 @@ public class Database {
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(GLC_TABLE, columns, null, null, null, null, null);
+        return mDB.query(GLC_TABLE, columns, null, null, null, null, ORDER);
     }
     // To retrieve data from a table of temperature
     public Cursor getTemperature(@NonNull String columnTime, @NonNull String columnHealth,
@@ -126,7 +128,7 @@ public class Database {
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(TMPR_TABLE, columns, null, null, null, null, null);
+        return mDB.query(TMPR_TABLE, columns, null, null, null, null, ORDER);
     }
 
     // to add a record to a table of blood pressure

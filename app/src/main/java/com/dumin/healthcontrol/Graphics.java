@@ -71,7 +71,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // закрываем подключение при выходе
+        // close the connection when exiting
         database.close();
     }
 
