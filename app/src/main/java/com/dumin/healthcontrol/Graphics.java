@@ -67,10 +67,10 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
         graph = (GraphView) v.findViewById(R.id.graph);
 
+        legends = (LinearLayout) v.findViewById(R.id.legends);
+
         // create a loader to read data
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
-
-        legends = (LinearLayout) v.findViewById(R.id.legends);
 
         onDraw(graph, series);
         Log.d(LOG_TAG,"onLoadFinished Graphics " + series.size());
