@@ -36,11 +36,10 @@ public class GraphViewManager {
     private int valueMin = 999;
     private int valueMax = 0;
 
-    public GraphViewManager(LayoutInflater inflater, ViewGroup container) {
+    public GraphViewManager(View view) {
 
-        View v = inflater.inflate(R.layout.graphics, container, false);
-        graph = (GraphView) v.findViewById(R.id.graph);
-        legends = (LinearLayout) v.findViewById(R.id.legends);
+        graph = (GraphView) view.findViewById(R.id.graph);
+        legends = (LinearLayout) view.findViewById(R.id.legends);
         series = new ArrayList(NUMB_GRAPH);
         series.trimToSize();
 
@@ -50,6 +49,7 @@ public class GraphViewManager {
 
         int color[] = {Color.RED, Color.BLUE, Color.GREEN};
         int count = 0;
+
         // get data points from a cursor
         ArrayList<DataPoint[]> values = pointsOfCursor(cursor, measurement);
 
@@ -74,6 +74,7 @@ public class GraphViewManager {
 
         // adjust the view
         customizeGraphView(measurement);
+
     }
 
     // Converts the cursor in the DataPoints and sets the minimum and maximum values, returns data points
@@ -83,6 +84,12 @@ public class GraphViewManager {
         GregorianCalendar calendar = new GregorianCalendar();
         Date date;
         int[] tmpArr;
+
+        // update any of the extreme values
+        dateMin = null;
+        dateMax = null;
+        valueMin = 999;
+        valueMax = 0;
 
         // Create arrays with the points on the graph
         ArrayList<DataPoint[]> values = new ArrayList<>();
