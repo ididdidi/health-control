@@ -2,35 +2,30 @@ package com.dumin.healthcontrol;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 
 /**
@@ -46,7 +41,9 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
     private Context activityContext;
     private Database database;
     private  DBLoader dbLoader;
+
     GraphView graph;
+    LinearLayout legends;
     private ArrayList<LineGraphSeries<DataPoint>> series;
 
 
@@ -73,7 +70,9 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         // create a loader to read data
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
 
-        onDraw(graph,series);
+        legends = (LinearLayout) v.findViewById(R.id.legends);
+
+        onDraw(graph, series);
         Log.d(LOG_TAG,"onLoadFinished Graphics " + series.size());
         return v;
     }
@@ -86,7 +85,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        onDraw(graph,series);
+        onDraw(graph, series);
         Log.d(LOG_TAG,"onLoadFinished Graphics" );
     }
 
@@ -104,16 +103,11 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     private void onDraw(GraphView graph, ArrayList<LineGraphSeries<DataPoint>> series){
 
-        int color[] = {Color.RED, Color.CYAN, Color.GREEN};
+        int color[] = {Color.RED, Color.BLUE, Color.GREEN};
 
         SPrefManager appPref = new SPrefManager(activityContext);
         String measurement = appPref.loadPreferences(SPrefManager.MEASUREMENT);
         graph.removeAllSeries();
-
-//        graph.getViewport().scrollToEnd();
-
-// as we use dates as labels, the human rounding to nice readable numbers
-// is not necessary
 
         Cursor cursor = dbLoader.loadInBackground();
 
@@ -167,14 +161,13 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
             }
             series.get(count).setColor(color[count]);
             series.get(count).setThickness(3);
+
             graph.addSeries(series.get(count));
         }while (++count < values.size() && measurement.equals(SPrefManager.BLOOD_PRESSURE));
 
         graph.setTitle(measurement);
         graph.setTitleTextSize(36);
         graph.setTitleColor(Color.GRAY);
-
-     //   graph.onDataChanged(true, true);
 
         graph.getViewport().setMinX(dateMin.getTime() - 3600000);
         graph.getViewport().setMaxX(dateMax.getTime() + 3600000);
@@ -191,6 +184,29 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(activityContext, dateFormat));
         graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 5 because of the space
         graph.getGridLabelRenderer().setNumVerticalLabels(10);
+
+        String titlesSeries[] = { "SIS", "DIA", "PUL" };
+        int[] legendViews = { R.id.graph_legend_view0, R.id.graph_legend_view1, R.id.graph_legend_view2 };
+        int[] legendTxt = { R.id.graph_legend_txt0, R.id.graph_legend_txt1, R.id.graph_legend_txt2 };
+
+        if(measurement.equals(SPrefManager.BLOOD_PRESSURE)) {
+            for(int i=0; i<legendTxt.length; i++){
+                TextView legend = legends.findViewById(legendTxt[i]);
+                legend.setText(titlesSeries[i]);
+                legend.setVisibility(View.VISIBLE);
+                View viewLegend = legends.findViewById(legendViews[i]);
+                viewLegend.setVisibility(View.VISIBLE);
+            }
+        }else{
+            TextView legend = legends.findViewById(legendTxt[0]);
+            legend.setText(measurement);
+            for(int i=1; i<legendTxt.length && i<legendViews.length; i++){
+                View viewLegend = legends.findViewById(legendViews[i]);
+                viewLegend.setVisibility(View.GONE);
+                legend = legends.findViewById(legendTxt[i]);
+                legend.setVisibility(View.GONE);
+            }
+        }
 
         Log.d(LOG_TAG,"onLoadFinished Graphics valueMin " + valueMin);
         Log.d(LOG_TAG,"onLoadFinished Graphics valueMax " + valueMax);

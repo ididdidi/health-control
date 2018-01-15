@@ -17,5 +17,6 @@
     <string name="date_time">Date time</string>
     <string name="overall_health">Overall\nhealth</string>
     <string name="value">Value</string>
+    <string name="legend">Legend</string>
 
 </resources>
