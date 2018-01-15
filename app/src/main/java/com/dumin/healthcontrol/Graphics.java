@@ -72,6 +72,11 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         // create a loader to read data
         getActivity().getSupportLoaderManager().initLoader(1, null, this);
 
+        SPrefManager appPref = new SPrefManager(activityContext);
+        String measurement = appPref.loadPreferences(SPrefManager.MEASUREMENT);
+
+        GraphViewManager graphs = new GraphViewManager(inflater, container);
+
         onDraw(graph, series);
         Log.d(LOG_TAG,"onLoadFinished Graphics " + series.size());
         return v;
