@@ -25,8 +25,7 @@ import java.util.GregorianCalendar;
  * Created by operator on 15.01.2018.
  */
 
-public class chartsManager {
-
+public class GraphViewManager {
     private final int NUMB_GRAPH = 3;
     private GraphView graph;
     private LinearLayout legends;
@@ -37,7 +36,7 @@ public class chartsManager {
     private int valueMin = 999;
     private int valueMax = 0;
 
-    public chartsManager(LayoutInflater inflater, ViewGroup container) {
+    public GraphViewManager(LayoutInflater inflater, ViewGroup container) {
 
         View v = inflater.inflate(R.layout.graphics, container, false);
         graph = (GraphView) v.findViewById(R.id.graph);
