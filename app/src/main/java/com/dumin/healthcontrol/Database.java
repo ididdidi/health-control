@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * Class for the creation and management of database.
@@ -86,7 +87,7 @@ public class Database {
     }
 
     // The same requests for multiple tables from the database
-    private String[] formQuery(@NonNull String[] getColumns){
+    private final String[] formQuery(@NonNull String[] getColumns){
         String[] columns = {
                 COLUMN_ID,
                 "strftime('%d.%m.%Y \n %H:%M', datetime(" + COLUMN_TIME +
@@ -102,33 +103,39 @@ public class Database {
     public Cursor getBloodPressure(@NonNull String columnTime, @NonNull String columnHealth,
                                    @NonNull String columnValues) {
 
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+
         String requestValues =  COLUMN_SYSTOLIC_PRESSURE + " || '/' || " + COLUMN_DIASTOLIC_PRESSURE +
                 " || ' ' || " + COLUMN_PULSE + " as " + columnValues;
 
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(BP_TABLE, columns, null, null, null, null, ORDER);
+        return mDB.query(BP_TABLE, columns, selectTime, null, null, null, ORDER);
     }
     // To retrieve data from a table of glucose
     public Cursor getGlucose(@NonNull String columnTime, @NonNull String columnHealth,
                              @NonNull String columnValues) {
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+
         String requestValues = "round(" + COLUMN_GLUCOSE_LEVELS + ", 1)" + " as "+ columnValues;
 
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(GLC_TABLE, columns, null, null, null, null, ORDER);
+        return mDB.query(GLC_TABLE, columns, selectTime, null, null, null, ORDER);
     }
     // To retrieve data from a table of temperature
     public Cursor getTemperature(@NonNull String columnTime, @NonNull String columnHealth,
                                  @NonNull String columnValues) {
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+
         String requestValues = "round(" + COLUMN_BODY_TEMPERATURE + ", 1)" + " as "+ columnValues;
 
         String[] getColumns = {columnTime, columnHealth, requestValues};
         String[] columns = formQuery(getColumns);
 
-        return mDB.query(TMPR_TABLE, columns, null, null, null, null, ORDER);
+        return mDB.query(TMPR_TABLE, columns, selectTime, null, null, null, ORDER);
     }
 
     // to add a record to a table of blood pressure
@@ -178,6 +185,75 @@ public class Database {
         }
     }
 
+    public Cursor getStatistics(@NonNull String measurement){
+
+        String table = BP_TABLE;
+        String selectValue = COLUMN_SYSTOLIC_PRESSURE;
+        String columnsValue = COLUMN_ID + ", " + COLUMN_TIME + ", " + COLUMN_SYSTOLIC_PRESSURE +
+                " || '/' || " + COLUMN_DIASTOLIC_PRESSURE + " || ' ' || " + COLUMN_PULSE;
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+
+        switch (measurement){
+            case SPrefManager.BLOOD_PRESSURE:
+                table = BP_TABLE;
+                selectValue = COLUMN_SYSTOLIC_PRESSURE;
+                columnsValue = COLUMN_ID + ", " + COLUMN_TIME + ", " + COLUMN_SYSTOLIC_PRESSURE +
+                        " || '/' || " + COLUMN_DIASTOLIC_PRESSURE + " || ' ' || " + COLUMN_PULSE;
+                break;
+            case SPrefManager.GLUCOSE:
+                table = GLC_TABLE;
+                selectValue = COLUMN_GLUCOSE_LEVELS;
+                columnsValue = COLUMN_ID + ", " + COLUMN_TIME + ", round(" + COLUMN_GLUCOSE_LEVELS + ", 1)";
+                break;
+            case SPrefManager.TEMPERATURE:
+                table = TMPR_TABLE;
+                selectValue = COLUMN_BODY_TEMPERATURE;
+                columnsValue = COLUMN_ID + ", " + COLUMN_TIME + ", round(" + COLUMN_BODY_TEMPERATURE + ", 1)";
+                break;
+            default:
+                break;
+        }
+
+        String max = StatisticsLoader.COLUMN_MAX;
+        String min = StatisticsLoader.COLUMN_MIN;
+        String avg = StatisticsLoader.COLUMN_AVG;
+        String maxTime = StatisticsLoader.COLUMN_MAX_TIME;
+        String minTime = StatisticsLoader.COLUMN_MIN_TIME;
+        String avgTime = StatisticsLoader.COLUMN_AVG_TIME;
+
+        String[] columnAVG = {"AVG(" + selectValue + ") as avg"};
+        Cursor cursor = mDB.query(table,columnAVG,selectTime,null,null,null,null);
+        cursor.moveToFirst();
+        if(cursor.getCount() == 0){ return null; }
+            double avgValue = cursor.getDouble(cursor.getColumnIndexOrThrow("avg"));
+
+        String sbq_max = "( SELECT " + columnsValue + " as " + max +" FROM " + table +
+                " WHERE " + selectTime + " ORDER BY " + selectValue + " DESC LIMIT 1 ) as sbq_max";
+
+        String sbq_min = "( SELECT " + columnsValue + " as " + min + " FROM " + table +
+                " WHERE " + selectTime + " ORDER BY " + selectValue + " ASC LIMIT 1 ) as sbq_min";
+
+        cursor.moveToFirst();
+        Log.d(logTeg, "!" + cursor.getCount() + " " + cursor.getString(cursor.getColumnIndexOrThrow("avg")));
+
+        String sbq_avg = "( SELECT " + columnsValue + " as " + avg + " FROM " + table +
+                " WHERE " + selectTime + " AND " + selectValue +
+                " <= " + avgValue + " ORDER BY " + selectValue + " DESC LIMIT 1 ) as sbq_avg";
+
+        String query = sbq_max + ", " + sbq_min + ", " + sbq_avg;
+
+        String[] columns = {
+                max, "sbq_max." + COLUMN_TIME + " as " + maxTime,
+                min, "sbq_min." + COLUMN_TIME + " as " + minTime,
+                avg, "sbq_avg." + COLUMN_TIME + " as " + avgTime };
+
+        cursor = mDB.query(query,columns,null,null,null,null,null);
+        cursor.moveToFirst();
+        if(cursor.getCount() == 0){ return null; }
+        Log.d(logTeg, "!" + cursor.getCount() + " " + cursor.getString(cursor.getColumnIndexOrThrow("avg")));
+        return cursor;
+    }
+
     // class for the creation and management of database
     private class DBHelper extends SQLiteOpenHelper {
 
@@ -198,4 +274,5 @@ public class Database {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         }
     }
+    private final String logTeg = "myLogs";
 }

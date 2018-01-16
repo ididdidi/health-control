@@ -149,8 +149,9 @@ public class MainActivity extends AppCompatActivity
         default: appPref.savePreferences(appPref.MEASUREMENT, appPref.BLOOD_PRESSURE);
         }
         // The message for the loader that the data has been changed
-        this.getSupportLoaderManager().getLoader(0).forceLoad();
-        this.getSupportLoaderManager().getLoader(1).forceLoad();
+        this.getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
+        this.getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
+        this.getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
 
         TextView viewMs = (TextView) findViewById(R.id.tv_measurement);
         viewMs.setText(appPref.loadPreferences(appPref.MEASUREMENT));
@@ -165,8 +166,9 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(data == null) {return;}
         if(data.getBooleanExtra("update",false)){
-            this.getSupportLoaderManager().getLoader(0).forceLoad();
-            this.getSupportLoaderManager().getLoader(1).forceLoad();
+            this.getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
+            this.getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
+            this.getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
         }
     }
 

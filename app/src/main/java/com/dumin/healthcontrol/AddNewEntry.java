@@ -1,5 +1,6 @@
 package com.dumin.healthcontrol;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -88,17 +91,19 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
 
         Calendar calendar = new GregorianCalendar();
 
-        Time androidTime = new Time(Time.getCurrentTimezone());
-        androidTime.setToNow();
-
         // To set the current time or taken from Bundle
         setKnownTime(savedInstanceState, calendar);
 
+        @SuppressLint("SimpleDateFormat")
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+
         TextView dateTextView = (TextView) findViewById(R.id.date);
-        dateTextView.setText(androidTime.format("%d.%m.%Y"));
+        dateTextView.setText(dateFormat.format(calendar.getTime()));
 
         TextView timeTextView = (TextView) findViewById(R.id.time);
-        timeTextView.setText(androidTime.format("%H:%M"));
+        timeTextView.setText(timeFormat.format(calendar.getTime()));
     }
 
     // Added RadioImage to indicate overall health

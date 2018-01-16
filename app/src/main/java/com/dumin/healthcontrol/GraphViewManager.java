@@ -155,7 +155,7 @@ public class GraphViewManager {
 
         // set Title graph view
         graph.setTitle(measurement);
-        graph.setTitleTextSize(36);
+        graph.setTitleTextSize(40);
         graph.setTitleColor(Color.GRAY);
 
         // setting extreme values

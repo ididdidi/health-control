@@ -28,9 +28,9 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="8dp"
                     android:layout_weight="1"
-                    android:text="date"
                     android:textAlignment="viewEnd"
-                    android:textSize="24dp" />
+                    android:textSize="24dp"
+                    android:text="date" />
 
                 <TextView
                     android:id="@+id/time"
@@ -51,6 +51,13 @@
                 android:layout_height="wrap_content">
 
             </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:text="Overall health" />
 
             <RadioGroup
                 android:id="@+id/rg_overallHealth"

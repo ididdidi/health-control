@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 public class EntriesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final int LOADER_ID = 0;
     private static final int CM_DELETE_ID = 1;
 
     private Context activityContext;
@@ -70,7 +71,7 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         registerForContextMenu(lvData);
 
         // create a loader to read data
-        getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -87,8 +88,9 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
             // извлекаем id записи и удаляем соответствующую запись в БД
             database.delRec(appPref.loadPreferences(SPrefManager.MEASUREMENT), acmi.id);
             // получаем новый курсор с данными
-            getActivity().getSupportLoaderManager().getLoader(0).forceLoad();
-            getActivity().getSupportLoaderManager().getLoader(1).forceLoad();
+            getActivity().getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
+            getActivity().getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
+            getActivity().getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
             return true;
         }
         return super.onContextItemSelected(item);

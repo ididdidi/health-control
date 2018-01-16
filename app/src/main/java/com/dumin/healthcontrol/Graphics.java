@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final int LOADER_ID = 1;
     private SPrefManager appPref;
     private Context activityContext;
     private Database database;
@@ -27,7 +28,6 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityContext = getActivity();
-
         // open the DB connection
         database = new Database(activityContext);
         database.open();
@@ -41,7 +41,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         View v = inflater.inflate(R.layout.graphics, container, false);
 
         // create a loader to read data
-        getActivity().getSupportLoaderManager().initLoader(1, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
         // create a new GraphViewManager
         graphs = new GraphViewManager(v);
@@ -60,7 +60,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        graphs.onDraw(dbLoader.loadInBackground(),appPref.loadPreferences(SPrefManager.MEASUREMENT));
+        graphs.onDraw(data,appPref.loadPreferences(SPrefManager.MEASUREMENT));
     }
 
     @Override

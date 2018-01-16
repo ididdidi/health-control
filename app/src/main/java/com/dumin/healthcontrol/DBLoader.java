@@ -44,4 +44,10 @@ public class DBLoader extends CursorLoader {
         }
         return cursor;
     }
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        if (takeContentChanged())
+            forceLoad();
+    }
 }
