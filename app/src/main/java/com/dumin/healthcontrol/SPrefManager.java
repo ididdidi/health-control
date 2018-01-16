@@ -6,17 +6,24 @@ import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.time.Month;
+
 /**
- * Created by operator on 11.01.2018.
+ * Creates and manages display settings.
  */
 
 public class SPrefManager {
 
-    public final static String APP_PREFERENCES = "app_preferences";
-    public final static String MEASUREMENT = "measurement";
-    public final static String BLOOD_PRESSURE = "SIS / DIA  PUL";
-    public final static String GLUCOSE = "Glucose";
-    public final static String TEMPERATURE = "Temperature";
+    public static final String APP_PREFERENCES = "app_preferences";
+    public static final String MEASUREMENT = "measurement";
+    public static final String BLOOD_PRESSURE = "SIS / DIA  PUL";
+    public static final String GLUCOSE = "Glucose";
+    public static final String TEMPERATURE = "Temperature";
+    public static final String TIME_FRAME = "Time frame";
+    public static final String WEEK = "Week";
+    public static final String MONTH = "Month";
+    public static final String YEAR = "Year";
+    public static final String All_TIME = "All time";
 
     private SharedPreferences appPref;
 
@@ -36,10 +43,11 @@ public class SPrefManager {
     public String loadPreferences(@NonNull String key) {
         switch (key) {
             case MEASUREMENT:
-                return appPref.getString(key,
-                        BLOOD_PRESSURE);
+                return appPref.getString(key, BLOOD_PRESSURE);
+            case TIME_FRAME:
+                return appPref.getString(key, WEEK);
             default:
-                return "LoadPreferences no correct";
+                return "";
         }
     }
 }

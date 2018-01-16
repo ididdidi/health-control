@@ -103,7 +103,7 @@ public class Database {
     public Cursor getBloodPressure(@NonNull String columnTime, @NonNull String columnHealth,
                                    @NonNull String columnValues) {
 
-        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','" + getTimeFrame(mCtx) + " day')";
 
         String requestValues =  COLUMN_SYSTOLIC_PRESSURE + " || '/' || " + COLUMN_DIASTOLIC_PRESSURE +
                 " || ' ' || " + COLUMN_PULSE + " as " + columnValues;
@@ -116,7 +116,7 @@ public class Database {
     // To retrieve data from a table of glucose
     public Cursor getGlucose(@NonNull String columnTime, @NonNull String columnHealth,
                              @NonNull String columnValues) {
-        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','" + getTimeFrame(mCtx) + " day')";
 
         String requestValues = "round(" + COLUMN_GLUCOSE_LEVELS + ", 1)" + " as "+ columnValues;
 
@@ -128,7 +128,7 @@ public class Database {
     // To retrieve data from a table of temperature
     public Cursor getTemperature(@NonNull String columnTime, @NonNull String columnHealth,
                                  @NonNull String columnValues) {
-        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','" + getTimeFrame(mCtx) + " day')";
 
         String requestValues = "round(" + COLUMN_BODY_TEMPERATURE + ", 1)" + " as "+ columnValues;
 
@@ -191,7 +191,7 @@ public class Database {
         String selectValue = COLUMN_SYSTOLIC_PRESSURE;
         String columnsValue = COLUMN_ID + ", " + COLUMN_TIME + ", " + COLUMN_SYSTOLIC_PRESSURE +
                 " || '/' || " + COLUMN_DIASTOLIC_PRESSURE + " || ' ' || " + COLUMN_PULSE;
-        String selectTime = COLUMN_TIME + " >= strftime('%s','now','-7 day')";
+        String selectTime = COLUMN_TIME + " >= strftime('%s','now','" + getTimeFrame(mCtx) + " day')";
 
         switch (measurement){
             case SPrefManager.BLOOD_PRESSURE:
@@ -272,6 +272,21 @@ public class Database {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        }
+    }
+
+    private int getTimeFrame(Context mCtx){
+        SPrefManager appref = new SPrefManager(mCtx);
+
+        switch (appref.loadPreferences(SPrefManager.TIME_FRAME)){
+            case SPrefManager.WEEK:
+                return -7;
+            case SPrefManager.MONTH:
+                return -31;
+            case SPrefManager.YEAR:
+                return -360;
+            default:
+                return -17500;
         }
     }
     private final String logTeg = "myLogs";

@@ -1,5 +1,7 @@
 package com.dumin.healthcontrol;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,7 +25,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    // the ID of the dialog AlertDialog with buttons
+    private final int TIME_FRAME_RADIO = 0;
     private SPrefManager appPref;
 
     private ViewPager viewPager;
@@ -121,13 +125,74 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.time_frame) {
+            showDialog(TIME_FRAME_RADIO);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    // Controls the settings of the time interval
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        String timeFrame = appPref.loadPreferences(SPrefManager.TIME_FRAME);
+        final int[] checkedItem = {0};
+        final String[] mChooseTime = { SPrefManager.WEEK, SPrefManager.MONTH,
+                SPrefManager.YEAR, SPrefManager.All_TIME };
+        for(int i=0; i<mChooseTime.length; i++){
+            if(mChooseTime[i].equals(timeFrame)){ checkedItem[0] = i; }
+        }
+        Toast.makeText(
+                getApplicationContext(),
+                "You have chosen: "
+                        + mChooseTime[checkedItem[0]],
+                Toast.LENGTH_SHORT).show();
+
+        switch (id) {
+            case TIME_FRAME_RADIO:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("Select the time interval");
+
+                builder.setCancelable(false);
+                        // add one button to close the dialog
+                builder.setPositiveButton("Ok",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        appPref.savePreferences(SPrefManager.TIME_FRAME, mChooseTime[checkedItem[0]]);
+                                        Toast.makeText(
+                                                getApplicationContext(),
+                                                "You have chosen: "
+                                                        + mChooseTime[checkedItem[0]],
+                                                Toast.LENGTH_SHORT).show();
+                                        dialog.cancel();
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.cancel();
+                                    }
+                                })
+
+                        // add switches
+                        .setSingleChoiceItems(mChooseTime, checkedItem[0],
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                                        int item) {
+                                        checkedItem[0] = item;
+                                    }
+                                });
+                return builder.create();
+            default:
+                return null;
+        }
     }
 
     @Override
