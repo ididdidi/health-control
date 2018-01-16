@@ -57,10 +57,10 @@ public class EntriesList extends Fragment implements LoaderManager.LoaderCallbac
         return view;
     }
 
-    private void onCreateAdapter(View view){
+    private void onCreateAdapter(View view) {
         // generated columns mapping
-        String[] from = new String[] {DBLoader.COLUMN_TIME, DBLoader.COLUMN_OVERALL_HEALTH, DBLoader.COLUMN_VALUE};
-        int[] to = new int[] {R.id.time_txt, R.id.overall_health, R.id.value_txt};
+        String[] from = new String[]{DBLoader.COLUMN_TIME, DBLoader.COLUMN_OVERALL_HEALTH, DBLoader.COLUMN_VALUE};
+        int[] to = new int[]{R.id.time_txt, R.id.overall_health, R.id.value_txt};
 
         // create adapter and custom list
         scAdapter = new SimpleCursorAdapter(activityContext, R.layout.entries_list_item, null, from, to, 0);

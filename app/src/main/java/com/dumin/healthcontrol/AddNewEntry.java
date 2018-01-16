@@ -3,11 +3,10 @@ package com.dumin.healthcontrol;
 import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.format.Time;
 import android.view.MenuItem;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -35,8 +34,8 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         // Display date and  time on screen
         onCreateTimeView(savedInstanceState);
 
-            // chooses the fragment to display the current measurement
-        if(savedInstanceState==null){
+        // chooses the fragment to display the current measurement
+        if (savedInstanceState == null) {
             Intent intent = getIntent();
             setupAddEntryFragment(intent.getStringExtra(SPrefManager.APP_PREFERENCES));
         }
@@ -45,7 +44,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
         onCreateRGOverallHealth(savedInstanceState);
     }
 
-    private void onCreateActionBar(){
+    private void onCreateActionBar() {
         // Back arrow in action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
@@ -53,7 +52,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     }
 
     // chooses the fragment to display the current measurement
-    private void setupAddEntryFragment (@NonNull String measurement){
+    private void setupAddEntryFragment(@NonNull String measurement) {
         FragmentTransaction frTransaction = getFragmentManager().beginTransaction();
 
         switch (measurement) {
@@ -87,7 +86,7 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     }
 
     // Display date and  time on screen
-    private void onCreateTimeView(Bundle savedInstanceState){
+    private void onCreateTimeView(Bundle savedInstanceState) {
 
         Calendar calendar = new GregorianCalendar();
 
@@ -107,10 +106,10 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
     }
 
     // Added RadioImage to indicate overall health
-    private void onCreateRGOverallHealth(Bundle savedInstanceState){
+    private void onCreateRGOverallHealth(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             overallHealth = R.drawable.ic_sentiment_neutral_grey;
-        }else{
+        } else {
             overallHealth = savedInstanceState.getInt(OVERALL_HEALTH, R.drawable.ic_sentiment_neutral_grey);
         }
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rg_overallHealth);
@@ -158,21 +157,24 @@ public class AddNewEntry extends AppCompatActivity implements onSomeEventListene
                 return super.onOptionsItemSelected(item);
         }
     }
+
     // Sends a signal about the successful adding entry
     @Override
     public void someEvent(boolean update) {
         Intent intent = getIntent();
-        intent.putExtra("update",true);
+        intent.putExtra("update", true);
         setResult(RESULT_OK, intent);
         this.finish();
     }
+
     // Stealing time from the Activity
     @Override
-    public long getTimeInSeconds(){
+    public long getTimeInSeconds() {
         return timeInMillis / 1000;
     }
+
     @Override
-    public int getOverallHealth(){
+    public int getOverallHealth() {
         return overallHealth;
     }
 }

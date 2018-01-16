@@ -20,12 +20,12 @@ import android.widget.TextView;
 
 public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
-    private onSomeEventListener updateInformMainActivity;
     private final static String TEMPERATURE = "temperature";
+    private final double ten = 10.0;
+    private onSomeEventListener updateInformMainActivity;
     private double temperature;
     private TextView tvTemper;
     private double minTemper = 34.0;
-    private final double ten = 10.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,7 +109,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
         }
     }
 
-    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double tmprt){
+    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double tmprt) {
         Database database = new Database(context);
         database.open();
         database.addTemperature(timeInSeconds, overallHealth, tmprt);

@@ -6,6 +6,8 @@ package com.dumin.healthcontrol;
 
 public interface onSomeEventListener {
     void someEvent(boolean update);     // Sends a signal about the successful adding entry
+
     long getTimeInSeconds();            // Stealing time from the Activity
+
     int getOverallHealth();             // Stealing value overall health
 }

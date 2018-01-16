@@ -1,7 +1,6 @@
 package com.dumin.healthcontrol;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.content.CursorLoader;
@@ -40,10 +39,12 @@ public class DBLoader extends CursorLoader {
             case SPrefManager.TEMPERATURE:
                 cursor = db.getTemperature(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
                 break;
-            default: cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
+            default:
+                cursor = db.getBloodPressure(COLUMN_TIME, COLUMN_OVERALL_HEALTH, COLUMN_VALUE);
         }
         return cursor;
     }
+
     @Override
     protected void onStartLoading() {
         super.onStartLoading();

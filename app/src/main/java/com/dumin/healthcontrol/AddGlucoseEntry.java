@@ -24,11 +24,11 @@ import java.util.Locale;
 public class AddGlucoseEntry extends Fragment {
 
     private final String GLUCOSE = "glucose";
+    private final double ten = 10.0;
     private onSomeEventListener updateInformMainActivity;
     private HorizontalWheelView horizontalWheelView;
     private TextView tvGlucose;
     private double glucose;
-    private final double ten = 10.0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,8 +119,9 @@ public class AddGlucoseEntry extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
     // Add the values in the database
-    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double glc){
+    private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth, double glc) {
         Database database = new Database(context);
         database.open();
         database.addGlucose(timeInSeconds, overallHealth, glc);

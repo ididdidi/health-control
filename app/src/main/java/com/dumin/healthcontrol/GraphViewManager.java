@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,7 +43,7 @@ public class GraphViewManager {
 
     }
 
-    public void onDraw(@NonNull Cursor cursor, @NonNull String measurement){
+    public void onDraw(@NonNull Cursor cursor, @NonNull String measurement) {
 
         int color[] = {Color.RED, Color.BLUE, Color.GREEN};
         int count = 0;
@@ -57,10 +55,10 @@ public class GraphViewManager {
         graph.removeAllSeries();
 
         // fill a series of data points and pass them on to GraphView
-        do{
-            if(series.size()<count+1){
+        do {
+            if (series.size() < count + 1) {
                 series.add(new LineGraphSeries<>(values.get(count)));
-            }else {
+            } else {
                 series.get(count).resetData(values.get(count));
             }
 
@@ -70,7 +68,7 @@ public class GraphViewManager {
 
             // add a new series GraphView
             graph.addSeries(series.get(count));
-        }while (++count < values.size() && measurement.equals(SPrefManager.BLOOD_PRESSURE));
+        } while (++count < values.size() && measurement.equals(SPrefManager.BLOOD_PRESSURE));
 
         // adjust the view
         customizeGraphView(measurement);
@@ -119,14 +117,22 @@ public class GraphViewManager {
                 // If the desired value with three parameters(blood pressure)
                 if (measurement.equals(SPrefManager.BLOOD_PRESSURE)) {
                     for (int i = 0; i < values.size(); i++) {
-                        values.get(i)[index-count] = new DataPoint(date, tmpArr[i]);
-                        if (valueMin > tmpArr[i]) { valueMin = tmpArr[i]; }
-                        if (valueMax < tmpArr[i]) { valueMax = tmpArr[i]; }
+                        values.get(i)[index - count] = new DataPoint(date, tmpArr[i]);
+                        if (valueMin > tmpArr[i]) {
+                            valueMin = tmpArr[i];
+                        }
+                        if (valueMax < tmpArr[i]) {
+                            valueMax = tmpArr[i];
+                        }
                     }
                 } else { // If the desired value with one of parameters
-                    values.get(0)[index-count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(DBLoader.COLUMN_VALUE)));
-                    if (valueMin > tmpArr[0]) { valueMin = tmpArr[0]; }
-                    if (valueMax < tmpArr[0]) { valueMax = tmpArr[0]; }
+                    values.get(0)[index - count] = new DataPoint(date, cursor.getDouble(cursor.getColumnIndexOrThrow(DBLoader.COLUMN_VALUE)));
+                    if (valueMin > tmpArr[0]) {
+                        valueMin = tmpArr[0];
+                    }
+                    if (valueMax < tmpArr[0]) {
+                        valueMax = tmpArr[0];
+                    }
                 }
                 count++;
 
@@ -151,7 +157,7 @@ public class GraphViewManager {
     }
 
     // configures a graphical representation
-    private void customizeGraphView(  @NonNull String measurement){
+    private void customizeGraphView(@NonNull String measurement) {
 
         // set Title graph view
         graph.setTitle(measurement);
@@ -162,7 +168,7 @@ public class GraphViewManager {
         graph.getViewport().setMinX(dateMin.getTime() - 3600000);
         graph.getViewport().setMaxX(dateMax.getTime() + 3600000);
 
-        double  deltaY = ( valueMax - valueMin ) * 0.02;
+        double deltaY = (valueMax - valueMin) * 0.02;
         graph.getViewport().setMinY(valueMin - deltaY);
         graph.getViewport().setMaxY(valueMax + deltaY);
 
@@ -176,22 +182,22 @@ public class GraphViewManager {
         graph.getGridLabelRenderer().setNumVerticalLabels(10);
 
         // configuring the chart legend
-        String titlesSeries[] = { "SIS", "DIA", "PUL" };
-        int[] legendViews = { R.id.graph_legend_view0, R.id.graph_legend_view1, R.id.graph_legend_view2 };
-        int[] legendTxt = { R.id.graph_legend_txt0, R.id.graph_legend_txt1, R.id.graph_legend_txt2 };
+        String titlesSeries[] = {"SIS", "DIA", "PUL"};
+        int[] legendViews = {R.id.graph_legend_view0, R.id.graph_legend_view1, R.id.graph_legend_view2};
+        int[] legendTxt = {R.id.graph_legend_txt0, R.id.graph_legend_txt1, R.id.graph_legend_txt2};
 
-        if(measurement.equals(SPrefManager.BLOOD_PRESSURE)) {
-            for(int i=0; i<legendTxt.length; i++){
+        if (measurement.equals(SPrefManager.BLOOD_PRESSURE)) {
+            for (int i = 0; i < legendTxt.length; i++) {
                 TextView legend = legends.findViewById(legendTxt[i]);
                 legend.setText(titlesSeries[i]);
                 legend.setVisibility(View.VISIBLE);
                 View viewLegend = legends.findViewById(legendViews[i]);
                 viewLegend.setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
             TextView legend = legends.findViewById(legendTxt[0]);
             legend.setText(measurement);
-            for(int i=1; i<legendTxt.length && i<legendViews.length; i++){
+            for (int i = 1; i < legendTxt.length && i < legendViews.length; i++) {
                 View viewLegend = legends.findViewById(legendViews[i]);
                 viewLegend.setVisibility(View.GONE);
                 legend = legends.findViewById(legendTxt[i]);

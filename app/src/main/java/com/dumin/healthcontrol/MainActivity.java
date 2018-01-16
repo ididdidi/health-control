@@ -143,12 +143,6 @@ public class MainActivity extends AppCompatActivity
         for(int i=0; i<mChooseTime.length; i++){
             if(mChooseTime[i].equals(timeFrame)){ checkedItem[0] = i; }
         }
-        Toast.makeText(
-                getApplicationContext(),
-                "You have chosen: "
-                        + mChooseTime[checkedItem[0]],
-                Toast.LENGTH_SHORT).show();
-
         switch (id) {
             case TIME_FRAME_RADIO:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -211,6 +205,14 @@ public class MainActivity extends AppCompatActivity
                 appPref.savePreferences(appPref.MEASUREMENT, appPref.TEMPERATURE);
                 break;
             }
+            case R.id.notification:
+                break;
+            case R.id.nav_manage:
+                break;
+            case R.id.nav_share:
+                break;
+            case R.id.nav_send:
+                break;
         default: appPref.savePreferences(appPref.MEASUREMENT, appPref.BLOOD_PRESSURE);
         }
         // The message for the loader that the data has been changed

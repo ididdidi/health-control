@@ -1,12 +1,10 @@
 package com.dumin.healthcontrol;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,7 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
     private SPrefManager appPref;
     private Context activityContext;
     private Database database;
-    private StatisticsLoader  statisticLoader;
+    private StatisticsLoader statisticLoader;
     private View view;
     private StatisticsData statisticsData;
 
@@ -37,6 +35,7 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
         database.open();
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,7 +62,7 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
         database.close();
     }
 
-    private void setStatistic(@NonNull View view, @NonNull StatisticsData statisticsData){
+    private void setStatistic(@NonNull View view, @NonNull StatisticsData statisticsData) {
         TextView title = view.findViewById(R.id.statistics);
         title.setText(appPref.loadPreferences(SPrefManager.MEASUREMENT));
 

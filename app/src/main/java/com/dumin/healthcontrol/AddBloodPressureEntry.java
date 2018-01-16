@@ -115,10 +115,10 @@ public class AddBloodPressureEntry extends Fragment {
 
     // Add the values in the database
     private void addDatabase(@NonNull Context context, long timeInSeconds, int overallHealth,
-                             int sPressure, int dPressure, int pulse){
+                             int sPressure, int dPressure, int pulse) {
         Database database = new Database(context);
         database.open();
-        database.addBloodPressure(timeInSeconds, overallHealth, sPressure, dPressure,pulse);
+        database.addBloodPressure(timeInSeconds, overallHealth, sPressure, dPressure, pulse);
         database.close();
     }
 }

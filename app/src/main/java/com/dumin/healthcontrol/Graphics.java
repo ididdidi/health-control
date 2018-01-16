@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
     private SPrefManager appPref;
     private Context activityContext;
     private Database database;
-    private  DBLoader dbLoader;
+    private DBLoader dbLoader;
     private GraphViewManager graphs;
 
     @Override
@@ -47,7 +46,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
         graphs = new GraphViewManager(v);
 
         // draw a graph
-        graphs.onDraw(dbLoader.loadInBackground(),appPref.loadPreferences(SPrefManager.MEASUREMENT));
+        graphs.onDraw(dbLoader.loadInBackground(), appPref.loadPreferences(SPrefManager.MEASUREMENT));
 
         return v;
     }
@@ -60,7 +59,7 @@ public class Graphics extends Fragment implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        graphs.onDraw(data,appPref.loadPreferences(SPrefManager.MEASUREMENT));
+        graphs.onDraw(data, appPref.loadPreferences(SPrefManager.MEASUREMENT));
     }
 
     @Override

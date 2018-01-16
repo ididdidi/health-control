@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 /**
  * Created by operator on 16.01.2018.
@@ -35,7 +34,7 @@ public class StatisticsLoader extends AsyncTaskLoader<StatisticsData> {
         SPrefManager appPref = new SPrefManager(context);
         Cursor cursor = database.getStatistics(appPref.loadPreferences(SPrefManager.MEASUREMENT));
 
-        if( cursor!=null ) {
+        if (cursor != null) {
             String max = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MAX));
             String min = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MIN));
             String avg = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AVG));
@@ -47,6 +46,7 @@ public class StatisticsLoader extends AsyncTaskLoader<StatisticsData> {
 
         return null;
     }
+
     @Override
     protected void onStartLoading() {
         super.onStartLoading();

@@ -2,11 +2,8 @@ package com.dumin.healthcontrol;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
-import java.time.Month;
 
 /**
  * Creates and manages display settings.
@@ -27,9 +24,10 @@ public class SPrefManager {
 
     private SharedPreferences appPref;
 
-    public SPrefManager(Context context){
+    public SPrefManager(Context context) {
         appPref = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
+
     //Allows you to make settings app
     public void savePreferences(@NonNull String key, @NonNull String value) {
 
