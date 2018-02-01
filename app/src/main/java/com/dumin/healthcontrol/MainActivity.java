@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity
                                                 "You have chosen: "
                                                         + mChooseTime[checkedItem[0]],
                                                 Toast.LENGTH_SHORT).show();
+                                        updateFragments();
                                         dialog.cancel();
                                     }
                                 })
@@ -215,10 +216,8 @@ public class MainActivity extends AppCompatActivity
                 break;
         default: appPref.savePreferences(appPref.MEASUREMENT, appPref.BLOOD_PRESSURE);
         }
-        // The message for the loader that the data has been changed
-        this.getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
-        this.getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
-        this.getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
+
+        updateFragments();
 
         TextView viewMs = (TextView) findViewById(R.id.tv_measurement);
         viewMs.setText(appPref.loadPreferences(appPref.MEASUREMENT));
@@ -233,10 +232,15 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(data == null) {return;}
         if(data.getBooleanExtra("update",false)){
-            this.getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
-            this.getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
-            this.getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
+            updateFragments();
         }
+    }
+
+    private void updateFragments(){
+        // The message for the loader that the data has been changed
+        this.getSupportLoaderManager().getLoader(EntriesList.LOADER_ID).forceLoad();
+        this.getSupportLoaderManager().getLoader(Graphics.LOADER_ID).forceLoad();
+        this.getSupportLoaderManager().getLoader(Statistics.LOADER_ID).forceLoad();
     }
 
 }
