@@ -43,7 +43,12 @@ public class GraphViewManager {
 
     }
 
-    public void onDraw(@NonNull Cursor cursor, @NonNull String measurement) {
+    public void onDraw(Cursor cursor, @NonNull String measurement) {
+
+        if(cursor==null || cursor.getCount()<1){
+            // Добавить банер "No data"!!!
+            return;
+        }
 
         int color[] = {Color.RED, Color.BLUE, Color.GREEN};
         int count = 0;
