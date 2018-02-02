@@ -46,7 +46,7 @@ public class GraphViewManager {
     public void onDraw(Cursor cursor, @NonNull String measurement) {
 
         if(cursor==null || cursor.getCount()<1){
-            // Добавить банер "No data"!!!
+            // Add banner: "No data"!!!
             return;
         }
 

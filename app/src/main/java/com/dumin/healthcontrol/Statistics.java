@@ -64,7 +64,7 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
 
     private void setStatistic(@NonNull View view, StatisticsData statisticsData) {
         if(statisticsData==null){
-        // Добавить банер "No data"!!!
+        // Add banner: "No data"!!!
             return;
         }
         TextView title = view.findViewById(R.id.statistics);
