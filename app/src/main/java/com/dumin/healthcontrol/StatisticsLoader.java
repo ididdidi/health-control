@@ -9,7 +9,7 @@ import android.support.v4.content.AsyncTaskLoader;
  * Created by operator on 16.01.2018.
  */
 
-public class StatisticsLoader extends AsyncTaskLoader<StatisticsData> {
+public class StatisticsLoader extends AsyncTaskLoader<StatisticsModel> {
 
     public static final String COLUMN_MAX = "min";
     public static final String COLUMN_MIN = "max";
@@ -29,7 +29,7 @@ public class StatisticsLoader extends AsyncTaskLoader<StatisticsData> {
     }
 
     @Override
-    public StatisticsData loadInBackground() {
+    public StatisticsModel loadInBackground() {
 
         SPrefManager appPref = new SPrefManager(context);
         Cursor cursor = database.getStatistics(appPref.loadPreferences(SPrefManager.MEASUREMENT));
@@ -41,7 +41,7 @@ public class StatisticsLoader extends AsyncTaskLoader<StatisticsData> {
             long maxT = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MAX_TIME));
             long minT = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MIN_TIME));
             long avgT = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_AVG_TIME));
-            return new StatisticsData(max, maxT, min, minT, avg, avgT);
+            return new StatisticsModel(max, maxT, min, minT, avg, avgT);
         }
 
         return null;

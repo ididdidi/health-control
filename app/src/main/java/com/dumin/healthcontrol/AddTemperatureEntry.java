@@ -22,7 +22,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
 
     private final static String TEMPERATURE = "temperature";
     private final double ten = 10.0;
-    private onSomeEventListener updateInformMainActivity;
+    private onUIEventListener updateInformMainActivity;
     private double temperature;
     private TextView tvTemper;
     private double minTemper = 34.0;
@@ -90,7 +90,7 @@ public class AddTemperatureEntry extends Fragment implements SeekBar.OnSeekBarCh
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            updateInformMainActivity = (onSomeEventListener) activity;
+            updateInformMainActivity = (onUIEventListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
         }

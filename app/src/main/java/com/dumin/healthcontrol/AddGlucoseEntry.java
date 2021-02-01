@@ -25,7 +25,7 @@ public class AddGlucoseEntry extends Fragment {
 
     private final String GLUCOSE = "glucose";
     private final double ten = 10.0;
-    private onSomeEventListener updateInformMainActivity;
+    private onUIEventListener updateInformMainActivity;
     private HorizontalWheelView horizontalWheelView;
     private TextView tvGlucose;
     private double glucose;
@@ -101,7 +101,7 @@ public class AddGlucoseEntry extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            updateInformMainActivity = (onSomeEventListener) activity;
+            updateInformMainActivity = (onUIEventListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
         }

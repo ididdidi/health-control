@@ -10,7 +10,7 @@ import java.util.Date;
  * Class for storing statistics.
  */
 
-public class StatisticsData {
+public class StatisticsModel {
     private String maxValue;
     private String minValue;
     private String avgValue;
@@ -18,7 +18,7 @@ public class StatisticsData {
     private long minTime;
     private long avgTime;
 
-    public StatisticsData(String max, long maxT, String min, long minT, String avg, long avgT){
+    public StatisticsModel(String max, long maxT, String min, long minT, String avg, long avgT){
         maxValue = max;
         minValue = min;
         avgValue = avg;

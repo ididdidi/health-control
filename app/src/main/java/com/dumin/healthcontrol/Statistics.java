@@ -15,7 +15,7 @@ import android.widget.TextView;
  * Displays statistics in TabLayout
  */
 
-public class Statistics extends Fragment implements LoaderManager.LoaderCallbacks<StatisticsData> {
+public class Statistics extends Fragment implements LoaderManager.LoaderCallbacks<StatisticsModel> {
 
     public static final int LOADER_ID = 2;
     private SPrefManager appPref;
@@ -23,7 +23,7 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
     private Database database;
     private StatisticsLoader statisticLoader;
     private View view;
-    private StatisticsData statisticsData;
+    private StatisticsModel statisticsData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,22 +47,22 @@ public class Statistics extends Fragment implements LoaderManager.LoaderCallback
     }
 
     @Override
-    public Loader<StatisticsData> onCreateLoader(int id, Bundle args) {
+    public Loader<StatisticsModel> onCreateLoader(int id, Bundle args) {
         statisticLoader = new StatisticsLoader(activityContext, database);
         return statisticLoader;
     }
 
     @Override
-    public void onLoadFinished(Loader<StatisticsData> loader, StatisticsData data) {
+    public void onLoadFinished(Loader<StatisticsModel> loader, StatisticsModel data) {
         setStatistic(view, data);
     }
 
     @Override
-    public void onLoaderReset(Loader<StatisticsData> loader) {
+    public void onLoaderReset(Loader<StatisticsModel> loader) {
         database.close();
     }
 
-    private void setStatistic(@NonNull View view, StatisticsData statisticsData) {
+    private void setStatistic(@NonNull View view, StatisticsModel statisticsData) {
         if(statisticsData==null){
         // Add banner: "No data"!!!
             return;

@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class AddNewEntry extends AppCompatActivity implements onSomeEventListener {
+public class AddNewEntry extends AppCompatActivity implements onUIEventListener {
 
     private final String TIME = "time";
     private final String OVERALL_HEALTH = "overallHealth";

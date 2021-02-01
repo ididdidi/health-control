@@ -22,7 +22,7 @@ public class AddBloodPressureEntry extends Fragment {
     private final String SYSTOLIC_PRESSURE = "systolic_pressure";
     private final String DIASTOLIC_PRESSURE = "diastolic_pressure";
     private final String PULSE = "pulse";
-    private onSomeEventListener updateInformMainActivity;
+    private onUIEventListener updateInformMainActivity;
     private int systolic_pressure;
     private NumberPicker numberPicker0;
     private int diastolic_pressure;
@@ -91,7 +91,7 @@ public class AddBloodPressureEntry extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            updateInformMainActivity = (onSomeEventListener) activity;
+            updateInformMainActivity = (onUIEventListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
         }
